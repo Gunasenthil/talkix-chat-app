@@ -1,0 +1,59 @@
+
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>
+        Account
+    </title>
+
+    <link rel="stylesheet"
+    href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<div class="profile-page">
+
+    <img
+
+    src="{{ url_for('static', filename='uploads/' + current_user.profile_pic) }}"
+
+    class="big-profile"
+
+    >
+
+    <h1>
+        {{ current_user.name }}
+    </h1>
+
+    <p>
+        @{{ current_user.username }}
+    </p>
+
+    <p>
+        {{ current_user.bio }}
+    </p>
+
+    <h3>
+        📧 Email:
+        {{ current_user.email }}
+    </h3>
+
+    <h3>
+        📱 Phone:
+        {{ current_user.phone }}
+    </h3>
+
+    <h3>
+        🔒 Password:
+        {{ current_user.password }}
+    </h3>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>
+Profile
+</title>
+
+<link rel="stylesheet"
+href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<div class="profile-page">
+
+<img
+
+src="{{ url_for('static', filename='uploads/' + user.profile_pic) }}"
+
+class="big-profile"
+
+>
+
+<h1>
+{{ user.name }}
+</h1>
+
+<h3>
+@{{ user.username }}
+</h3>
+
+<p>
+{{ user.bio }}
+</p>
+
+<div class="follow-info">
+
+<h3>
+Followers:
+{{ followers }}
+</h3>
+
+<h3>
+Following:
+{{ following }}
+</h3>
+
+</div>
+
+{% if current_user.username == user.username %}
+
+<a href="/edit-profile">
+
+<button>
+
+Edit Profile
+
+</button>
+
+</a>
+
+<br><br>
+
+{% endif %}
+
+{% if current_user.username != user.username %}
+
+{% if already_following %}
+
+<button>
+
+Following
+
+</button>
+
+{% else %}
+
+<a href="/follow/{{ user.username }}">
+
+<button>
+
+Follow
+
+</button>
+
+</a>
+
+{% endif %}
+
+{% endif %}
+
+<br><br>
+
+<a href="/chat/{{ user.username }}">
+
+<button>
+
+Message
+
+</button>
+
+</a>
+
+</div>
+
+</body>
+</html>
