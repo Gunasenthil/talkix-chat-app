@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+</head>
+
+<body style="
+background:#111827;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+font-family:Arial;
+">
+
+<form
+method="POST"
+enctype="multipart/form-data"
+
+style="
+background:#1f2937;
+padding:40px;
+border-radius:20px;
+display:flex;
+flex-direction:column;
+gap:15px;
+width:350px;
+"
+>
+
+<h1 style="color:white;">
+Create Account
+</h1>
+
+
+<!-- EMAIL -->
+<input
+type="email"
+name="email"
+placeholder="Enter Gmail"
+required
+
+style="
+padding:15px;
+border:none;
+border-radius:10px;
+"
+>
+
+
+<!-- SEND OTP -->
+<button
+type="button"
+onclick="sendOTP()"
+
+style="
+padding:12px;
+border:none;
+border-radius:10px;
+background:#2563eb;
+color:white;
+cursor:pointer;
+"
+>
+Send OTP
+</button>
+
+
+<!-- OTP -->
+<input
+type="text"
+name="otp"
+placeholder="Enter OTP"
+required
+
+style="
+padding:15px;
+border:none;
+border-radius:10px;
+"
+>
+
+
+<!-- USERNAME -->
+<input
+type="text"
+name="username"
+placeholder="Username"
+required
+
+style="
+padding:15px;
+border:none;
+border-radius:10px;
+"
+>
+
+
+<!-- DOB -->
+<input
+type="date"
+name="dob"
+required
+
+style="
+padding:15px;
+border:none;
+border-radius:10px;
+"
+>
+
+
+<!-- GENDER -->
+<select
+name="gender"
+required
+
+style="
+padding:15px;
+border:none;
+border-radius:10px;
+"
+>
+
+<option value="">
+Select Gender
+</option>
+
+<option>
+Male
+</option>
+
+<option>
+Female
+</option>
+
+<option>
+Other
+</option>
+
+</select>
+
+
+<!-- PROFILE PHOTO -->
+<input
+type="file"
+name="profile_pic"
+required
+
+style="
+padding:10px;
+background:white;
+border-radius:10px;
+"
+>
+
+
+<!-- PASSWORD -->
+<input
+type="password"
+name="password"
+placeholder="Password"
+required
+
+style="
+padding:15px;
+border:none;
+border-radius:10px;
+"
+>
+
+
+<!-- CREATE ACCOUNT -->
+<button
+type="submit"
+
+style="
+padding:15px;
+border:none;
+border-radius:10px;
+background:#10b981;
+color:white;
+cursor:pointer;
+"
+>
+Create Account
+</button>
+
+
+<!-- LOGIN -->
+<a href="/login" style="color:white;">
+Already have account?
+</a>
+
+</form>
+
+
+<script>
+
+function sendOTP(){
+
+    fetch("/send-otp")
+    .then(response => response.text())
+    .then(data => {
+
+        alert(
+            "OTP generated 😎\nCheck terminal"
+        );
+
+    });
+
+}
+
+</script>
+
+</body>
+</html>

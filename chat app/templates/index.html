@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>
+Talkix
+</title>
+
+<link rel="stylesheet"
+href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+
+
+<!-- ================= LOADER PAGE ================= -->
+
+<div id="loader-page">
+
+    <div class="glow1"></div>
+
+    <div class="glow2"></div>
+
+    <div class="container">
+
+        <div class="circle"></div>
+
+        <img
+
+        src="{{ url_for('static', filename='applogo.png') }}"
+
+        class="logo"
+
+        >
+
+        <div class="tagline">
+
+            ---Talk More,Connect Better---
+
+        </div>
+
+        <br>
+
+        <div class="loading">
+
+            LOADING
+
+            <span class="dots">
+
+                <span class="dot"></span>
+
+                <span class="dot"></span>
+
+                <span class="dot"></span>
+
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ================= MAIN CONTENT ================= -->
+
+<div id="main-content">
+
+
+
+<!-- ================= SIDEBAR ================= -->
+
+<div class="sidebar">
+
+<img
+
+src="{{ url_for('static', filename='logoo.png') }}"
+
+class="app-logoo"
+
+>
+
+<br>
+
+<div class="menu">
+
+<a href="/profile/{{ current_user.username }}">
+
+<div class="menu-item">
+
+👤 Profile
+
+</div>
+
+</a>
+
+
+
+<div
+
+class="menu-item"
+
+onclick="
+window.location.href=
+'/account'
+"
+
+>
+
+👤 Account
+
+</div>
+
+
+
+<div
+
+class="menu-item"
+
+onclick="
+window.location.href=
+'/media'
+"
+
+>
+
+🖼 Media
+
+</div>
+
+
+
+<div
+
+class="menu-item"
+
+onclick="
+window.location.href=
+'/stories'
+"
+
+>
+
+🔥 Stories
+
+</div>
+
+</div>
+
+<br>
+
+<a href="/logout">
+
+<button class="logout-btn">
+
+Logout
+
+</button>
+
+</a>
+
+</div>
+
+
+
+<!-- ================= CHAT SECTION ================= -->
+
+<div class="chat-section">
+
+<div class="top-bar">
+
+<h2>
+
+Welcome
+{{ current_user.username }}
+
+</h2>
+
+</div>
+
+
+
+<!-- ================= STORIES ================= -->
+
+<div class="stories-bar">
+
+{% for story in stories %}
+
+<a href="/view-story/{{ story.id }}">
+
+<div class="story-circle">
+
+<img
+
+src="{{ url_for('static', filename='stories/' + story.image) }}"
+
+>
+
+<p>
+{{ story.username }}
+</p>
+
+</div>
+
+</a>
+
+{% endfor %}
+
+</div>
+
+
+
+<!-- ================= SEARCH ================= -->
+
+<div class="search-box">
+
+<input
+
+type="text"
+
+id="searchInput"
+
+placeholder="Search users..."
+
+onkeyup="searchUser()"
+
+>
+
+</div>
+
+
+
+<!-- ================= USERS ================= -->
+
+<div id="userList">
+
+{% for user in users %}
+
+<div
+
+class="chat-box"
+
+onclick="
+window.location.href=
+'/profile/{{ user.username }}'
+"
+
+>
+
+<img
+
+src="{{ url_for('static', filename='uploads/' + user.profile_pic) }}"
+
+class="profile"
+
+>
+
+<div class="chat-info">
+
+<h3>
+{{ user.name }}
+</h3>
+
+<p>
+@{{ user.username }}
+</p>
+
+{% if user.online %}
+
+<p style="color:lime;">
+🟢 Online
+</p>
+
+{% else %}
+
+<p style="color:gray;">
+Last seen:
+{{ user.last_seen }}
+</p>
+
+{% endif %}
+
+</div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<!-- ================= JAVASCRIPT ================= -->
+
+<script>
+
+
+
+/* SEARCH USER */
+
+function searchUser(){
+
+let input =
+
+document.getElementById(
+"searchInput"
+).value.toLowerCase();
+
+let users =
+
+document.getElementsByClassName(
+"chat-box"
+);
+
+for(let i = 0; i < users.length; i++){
+
+let username =
+
+users[i]
+.innerText
+.toLowerCase();
+
+if(username.includes(input)){
+
+users[i].style.display =
+"flex";
+
+}
+
+else{
+
+users[i].style.display =
+"none";
+
+}
+
+}
+
+}
+
+
+
+/* LOADER */
+
+document.getElementById(
+"main-content"
+).style.display = "none";
+
+setTimeout(function(){
+
+document.getElementById(
+"loader-page"
+).style.display = "none";
+
+document.getElementById(
+"main-content"
+).style.display = "flex";
+
+},3000);
+
+
+
+</script>
+
+</body>
+</html>
