@@ -73,7 +73,12 @@ href="{{ url_for('static', filename='style.css') }}">
 </div>
 
 <div class="mobile-top">
-    <img src="applogo.png" height="10" width="10">
+  <img
+    src="{{ url_for('static', filename='applogo.png') }}"
+    class="logo"
+    width="150"
+    height="150"
+>
 <div class="menu-toggle" onclick="toggleMenu()">
 ☰
 </div>
