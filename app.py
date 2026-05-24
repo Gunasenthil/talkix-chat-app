@@ -674,6 +674,10 @@ def logout():
 @login_required
 def chat(username):
 
+    user = User.query.filter_by(
+        username=username
+    ).first()
+
     messages = Message.query.filter(
 
         (
@@ -702,7 +706,9 @@ def chat(username):
 
         username=username,
 
-        messages=messages
+        messages=messages,
+
+        user=user
 
     )
 
