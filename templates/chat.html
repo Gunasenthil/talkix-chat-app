@@ -49,45 +49,63 @@
                     <div class="message me">
 
                         <p>
+<p>
 
-                            {{ msg.message }}
+    {{ msg.message }}
 
-                            <br>
+    <br>
 
-                            {% if msg.sender == current_user.username %}
+    {% if msg.sender == current_user.username %}
 
-                                {% if msg.seen %}
+        {% if msg.seen %}
 
-                                    <span
-                                    style="
-                                    font-size:12px;
-                                    color:skyblue;
-                                    "
-                                    >
+            <span
+            style="
+            font-size:12px;
+            color:skyblue;
+            "
+            >
 
-                                        ✔✔ Seen
+                ✔✔ Seen
 
-                                    </span>
+            </span>
 
-                                {% else %}
+        {% else %}
 
-                                    <span
-                                    style="
-                                    font-size:12px;
-                                    color:gray;
-                                    "
-                                    >
+            <span
+            style="
+            font-size:12px;
+            color:gray;
+            "
+            >
 
-                                        ✔ Sent
+                ✔ Sent
 
-                                    </span>
+            </span>
 
-                                {% endif %}
+        {% endif %}
 
-                            {% endif %}
+        <br>
 
-                        </p>
+        <a
 
+        href="/delete-message/{{ msg.id }}"
+
+        style="
+        color:red;
+        font-size:12px;
+        text-decoration:none;
+        "
+
+        >
+
+            Delete
+
+        </a>
+
+    {% endif %}
+
+</p>
                     </div>
 
                 {% else %}

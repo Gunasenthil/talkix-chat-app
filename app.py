@@ -1,5 +1,12 @@
 # ================= IMPORTS =================
-from flask import Flask, render_template, request, redirect
+from flask import (
+    Flask,
+    render_template,
+    request,
+    redirect,
+    session
+)
+
 from flask_sqlalchemy import SQLAlchemy
 
 from flask_login import (
@@ -11,7 +18,10 @@ from flask_login import (
     current_user
 )
 
-from flask_socketio import SocketIO, emit
+from flask_socketio import (
+    SocketIO,
+    emit
+)
 
 from werkzeug.utils import secure_filename
 
@@ -35,8 +45,6 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 login_manager.login_view = "login"
-
-generated_otp = ""
 
 # ================= USER =================
 class User(UserMixin, db.Model):
@@ -181,10 +189,12 @@ class StoryView(db.Model):
         db.String(100)
     )
 
+# ================= CREATE DB =================
 with app.app_context():
 
     db.create_all()
 
+# ================= LOGIN LOADER =================
 @login_manager.user_loader
 def load_user(user_id):
 
@@ -197,7 +207,6 @@ def load_user(user_id):
 def first_page():
 
     return redirect("/register")
-
 
 # ================= HOME =================
 @app.route("/home")
@@ -252,11 +261,17 @@ def profile(username):
     ).first()
 
     return render_template(
+
         "profile.html",
+
         user=user,
+
         followers=followers,
+
         following=following,
+
         already_following=already_following
+
     )
 
 # ================= FOLLOW =================
@@ -272,8 +287,11 @@ def follow(username):
     if not check:
 
         new_follow = Follow(
+
             follower=current_user.username,
+
             following=username
+
         )
 
         db.session.add(new_follow)
@@ -407,11 +425,17 @@ def media():
     ).all()
 
     return render_template(
+
         "media.html",
+
         images=images,
+
         voices=voices,
+
         documents=documents,
+
         links=links
+
     )
 
 # ================= STORIES =================
@@ -435,8 +459,11 @@ def stories():
         )
 
         new_story = Story(
+
             username=current_user.username,
+
             image=filename
+
         )
 
         db.session.add(new_story)
@@ -446,8 +473,11 @@ def stories():
     stories = Story.query.all()
 
     return render_template(
+
         "stories.html",
+
         stories=stories
+
     )
 
 # ================= VIEW STORY =================
@@ -458,15 +488,21 @@ def view_story(id):
     story = Story.query.get(id)
 
     check = StoryView.query.filter_by(
+
         story_id=id,
+
         viewer=current_user.username
+
     ).first()
 
     if not check:
 
         new_view = StoryView(
+
             story_id=id,
+
             viewer=current_user.username
+
         )
 
         db.session.add(new_view)
@@ -478,9 +514,13 @@ def view_story(id):
     ).all()
 
     return render_template(
+
         "view_story.html",
+
         story=story,
+
         viewers=viewers
+
     )
 
 # ================= REGISTER =================
@@ -489,8 +529,6 @@ def view_story(id):
     methods=["GET", "POST"]
 )
 def register():
-
-    global generated_otp
 
     if request.method == "POST":
 
@@ -524,7 +562,7 @@ def register():
             "static/uploads/" + filename
         )
 
-        if entered_otp != generated_otp:
+        if entered_otp != session.get("otp"):
 
             return "Wrong OTP"
 
@@ -564,20 +602,22 @@ def register():
         "register.html"
     )
 
-# ================= OTP =================
+# ================= SEND OTP =================
 @app.route("/send-otp")
 def send_otp():
 
-    global generated_otp
+    otp = str(
 
-    generated_otp = str(
         random.randint(
             100000,
             999999
         )
+
     )
 
-    print("OTP :", generated_otp)
+    session["otp"] = otp
+
+    print("OTP :", otp)
 
     return "OTP Sent"
 
@@ -599,11 +639,10 @@ def login():
         )
 
         user = User.query.filter_by(
-            username=username,
-            password=password
+            username=username
         ).first()
 
-        if user:
+        if user and user.password == password:
 
             user.online = True
 
@@ -662,10 +701,29 @@ def chat(username):
     ).all()
 
     return render_template(
+
         "chat.html",
+
         username=username,
+
         messages=messages
+
     )
+
+# ================= DELETE MESSAGE =================
+@app.route("/delete-message/<int:id>")
+@login_required
+def delete_message(id):
+
+    msg = Message.query.get(id)
+
+    if msg and msg.sender == current_user.username:
+
+        db.session.delete(msg)
+
+        db.session.commit()
+
+    return redirect(request.referrer)
 
 # ================= SOCKET =================
 @socketio.on("send_message")
@@ -696,10 +754,16 @@ def handle_message(data):
     db.session.commit()
 
     emit(
+
         "receive_message",
+
         data,
+
         broadcast=True
+
     )
+
+# ================= TYPING =================
 @socketio.on("typing")
 def typing(data):
 
