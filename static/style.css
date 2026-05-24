@@ -928,117 +928,137 @@ margin-bottom:10px;
 @media screen and (max-width:768px){
 
     body{
+
         flex-direction:column;
-        overflow:auto;
+
+        overflow-x:hidden;
+
     }
 
     .sidebar{
-        width:100%;
-        height:auto;
-        padding:15px;
-        border-right:none;
-        border-bottom:1px solid rgba(255,255,255,0.1);
-    }
 
-    .sidebar h1{
-        font-size:28px;
-        text-align:center;
-        margin-bottom:20px;
+        width:100%;
+
+        height:auto;
+
+        padding:15px;
+
+        border-right:none;
+
     }
 
     .menu{
+
+        display:flex;
+
         flex-direction:row;
+
         overflow-x:auto;
+
         gap:10px;
-        padding-bottom:10px;
+
     }
 
     .menu-item{
-        min-width:140px;
-        text-align:center;
-        padding:14px;
-        font-size:15px;
-    }
 
-    .logout-btn{
-        margin-top:15px;
-        width:100%;
+        min-width:130px;
+
+        font-size:14px;
+
+        padding:12px;
+
+        text-align:center;
+
     }
 
     .chat-section{
-        padding:15px;
+
+        width:100%;
+
+        padding:10px;
+
     }
 
     .top-bar h2{
-        font-size:28px;
-        text-align:center;
-    }
 
-    .search-box input{
-        padding:14px;
-        font-size:15px;
+        font-size:24px;
+
     }
 
     .stories-bar{
-        gap:15px;
-    }
 
-    .story-circle{
-        min-width:70px;
+        gap:10px;
+
     }
 
     .story-circle img{
-        width:65px;
-        height:65px;
+
+        width:60px;
+
+        height:60px;
+
     }
 
     .chat-box{
-        padding:14px;
-        gap:12px;
-        border-radius:18px;
+
+        width:100%;
+
+        padding:12px;
+
+        gap:10px;
+
     }
 
     .profile{
-        width:60px;
-        height:60px;
+
+        width:55px;
+
+        height:55px;
+
     }
 
     .chat-info h3{
-        font-size:18px;
+
+        font-size:17px;
+
     }
 
     .chat-info p{
-        font-size:13px;
-    }
 
-    .big-profile{
-        width:120px;
-        height:120px;
-    }
+        font-size:12px;
 
-    .follow-info{
-        gap:25px;
-    }
-
-    .follow-info h3{
-        font-size:18px;
-    }
-
-    .story-image{
-        width:100%;
     }
 
     .input-area{
+
         flex-direction:column;
-        gap:10px;
+
+        width:100%;
+
     }
 
     .input-area input{
+
         width:100%;
+
     }
 
     .input-area button{
+
         width:100%;
+
+    }
+
+    .story-image{
+
+        width:100%;
+
+    }
+
+    img{
+
+        max-width:100%;
+
     }
 
 }
