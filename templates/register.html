@@ -199,17 +199,13 @@ Already have account?
 
 <script>
 
-function sendOTP(){
+async function sendOTP(){
 
-    fetch("/send-otp")
-    .then(response => response.text())
-    .then(data => {
+    let response = await fetch("/send-otp");
 
-        alert(
-            "OTP generated 😎\nCheck terminal"
-        );
+    let otp = await response.text();
 
-    });
+    alert("Your OTP is: " + otp);
 
 }
 

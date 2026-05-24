@@ -607,19 +607,15 @@ def register():
 def send_otp():
 
     otp = str(
-
         random.randint(
             100000,
             999999
         )
-
     )
 
     session["otp"] = otp
 
-    print("OTP :", otp)
-
-    return "OTP Sent"
+    return otp
 
 # ================= LOGIN =================
 @app.route(
