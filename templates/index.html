@@ -72,7 +72,15 @@ href="{{ url_for('static', filename='style.css') }}">
 
 </div>
 
+<div class="mobile-top">
 
+<h2>Welcome {{ current_user.username }}</h2>
+
+<div class="menu-toggle" onclick="toggleMenu()">
+☰
+</div>
+
+</div>
 
 <!-- ================= MAIN CONTENT ================= -->
 
@@ -375,6 +383,15 @@ document.getElementById(
 },3000);
 
 
+
+</script>
+<script>
+
+function toggleMenu(){
+
+document.querySelector(".sidebar").classList.toggle("active");
+
+}
 
 </script>
 </div>
