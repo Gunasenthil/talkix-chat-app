@@ -32,6 +32,20 @@ import random
 # ================= APP =================
 app = Flask(__name__)
 
+app = Flask(__name__)
+
+socketio = SocketIO(
+
+    app,
+
+    cors_allowed_origins="*"
+
+)
+
+app.config["SECRET_KEY"] = "secret"
+
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///chat.db"
+
 app.config["SECRET_KEY"] = "secret"
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///chat.db"
@@ -867,6 +881,8 @@ if __name__ == "__main__":
 
         debug=True,
 
-        port=5001
+        port=5001,
+
+        allow_unsafe_werkzeug=True
 
     )
