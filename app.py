@@ -24,7 +24,11 @@ from werkzeug.utils import secure_filename
 
 from datetime import datetime
 
+import eventlet
+eventlet.monkey_patch()
+
 import random
+
 
 # ================= APP =================
 
@@ -34,7 +38,9 @@ socketio = SocketIO(
 
     app,
 
-    cors_allowed_origins="*"
+    cors_allowed_origins="*",
+
+    async_mode="eventlet"
 
 )
 
