@@ -18,9 +18,8 @@ from flask_login import (
     current_user
 )
 
-from flask_socketio import (
-    SocketIO,
-    emit
+from flask_socketio import SocketIO, emit
+
 )
 
 from werkzeug.utils import secure_filename
@@ -31,6 +30,8 @@ import random
 
 # ================= APP =================
 app = Flask(__name__)
+
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 app = Flask(__name__)
 
@@ -742,68 +743,18 @@ def delete_message(id):
     return redirect(request.referrer)
 
 # ================= SOCKET =================
-@app.route("/send-image", methods=["POST"])
-@login_required
-def send_image():
+# ================= SOCKET =================
 
-    image = request.files["image"]
-
-    filename = secure_filename(
-        image.filename
-    )
-
-    image.save(
-        "static/uploads/" + filename
-    )
+@socketio.on("send_message")
+def handle_message(data):
 
     new_message = Message(
 
-        sender=current_user.username,
+        sender=data["sender"],
 
-        receiver=request.form["receiver"],
+        receiver=data["receiver"],
 
-        message="",
-
-        image=filename,
-
-        voice="",
-
-        link="",
-
-        document=""
-
-    )
-
-    db.session.add(new_message)
-
-    db.session.commit()
-
-    return redirect(
-        "/chat/" + request.form["receiver"]
-    )
-
-
-@app.route("/send-document", methods=["POST"])
-@login_required
-def send_document():
-
-    document = request.files["document"]
-
-    filename = secure_filename(
-        document.filename
-    )
-
-    document.save(
-        "static/uploads/" + filename
-    )
-
-    new_message = Message(
-
-        sender=current_user.username,
-
-        receiver=request.form["receiver"],
-
-        message="",
+        message=data["message"],
 
         image="",
 
@@ -811,7 +762,9 @@ def send_document():
 
         link="",
 
-        document=filename
+        document="",
+
+        seen=False
 
     )
 
@@ -819,9 +772,62 @@ def send_document():
 
     db.session.commit()
 
-    return redirect(
-        "/chat/" + request.form["receiver"]
+    emit(
+
+        "receive_message",
+
+        {
+
+            "sender": data["sender"],
+
+            "receiver": data["receiver"],
+
+            "message": data["message"]
+
+        },
+
+        broadcast=True
+
     )
+
+
+
+@socketio.on("typing")
+def typing(data):
+
+    emit(
+
+        "show_typing",
+
+        {
+
+            "sender": data["sender"]
+
+        },
+
+        broadcast=True
+
+    )
+
+
+
+@socketio.on("stop_typing")
+def stop_typing(data):
+
+    emit(
+
+        "hide_typing",
+
+        {
+
+            "sender": data["sender"]
+
+        },
+
+        broadcast=True
+
+    )
+
 # ================= TYPING =================
 @socketio.on("typing")
 def typing(data):
@@ -879,9 +885,11 @@ if __name__ == "__main__":
 
         app,
 
-        debug=True,
+        host=0,o,o,o",
 
         port=5001,
+
+        debug=True,
 
         allow_unsafe_werkzeug=True
 
