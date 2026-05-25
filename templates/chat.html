@@ -54,7 +54,7 @@
 
     </div>
 
-    <!-- MESSAGES -->
+    <!-- CHAT BOX -->
 
     <div id="chat-box" class="messages-container">
 
@@ -68,15 +68,15 @@
 
                     <div class="tick">
 
-                    {% if msg.seen %}
+                        {% if msg.seen %}
 
-                        ✓✓
+                            ✓✓
 
-                    {% else %}
+                        {% else %}
 
-                        ✓
+                            ✓
 
-                    {% endif %}
+                        {% endif %}
 
                     </div>
 
@@ -110,7 +110,7 @@
                 +
             </button>
 
-            <!-- POPUP -->
+            <!-- POPUP MENU -->
 
             <div id="popup-menu"
             class="popup-menu">
@@ -171,7 +171,7 @@
 
         </div>
 
-        <!-- TEXT -->
+        <!-- MESSAGE INPUT -->
 
         <input
         type="text"
@@ -198,92 +198,25 @@
 
 </div>
 
+<!-- SOCKET -->
+
 <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 
 <script>
 
 const socket = io();
 
-/* TYPING */
-
-const messageInput =
-document.getElementById(
-"message-input"
-);
-
-messageInput.addEventListener(
-"input",
-() => {
-
-    socket.emit(
-    "typing",
-    {
-
-        sender:
-        "{{ current_user.username }}"
-
-    });
-
-    clearTimeout(
-    window.typingTimer
-    );
-
-    window.typingTimer =
-    setTimeout(() => {
-
-        socket.emit(
-        "stop_typing",
-        {
-
-            sender:
-            "{{ current_user.username }}"
-
-        });
-
-    },1000);
-
-});
-
-/* TOGGLE MENU */
-
-function toggleMenu(){
-
-    let menu =
-    document.getElementById(
-    "popup-menu"
-    );
-
-    if(
-    menu.style.display=="flex"
-    ){
-
-        menu.style.display="none";
-
-    }
-
-    else{
-
-        menu.style.display="flex";
-
-    }
-
-}
-
-/* SEND MESSAGE */
+/* ================= SEND MESSAGE ================= */
 
 function sendMessage(){
 
-    let input =
-    document.getElementById(
-    "message-input"
+    let input = document.getElementById(
+        "message-input"
     );
 
-    let message =
-    input.value;
+    let message = input.value;
 
-    if(
-    message.trim()==""
-    ){
+    if(message.trim() == ""){
 
         return;
 
@@ -301,97 +234,195 @@ function sendMessage(){
             receiver:
             "{{ username }}",
 
-            message:message
+            message: message
 
         }
 
     );
 
-    input.value="";
+    input.value = "";
 
 }
 
-/* RECEIVE MESSAGE */
+/* ================= ENTER KEY ================= */
 
-socket.on(
-"receive_message",
+document.getElementById(
+"message-input"
+).addEventListener(
 
-function(data){
+"keypress",
 
-    let chatBox =
-    document.getElementById(
-    "chat-box"
-    );
+function(e){
 
-    let div =
-    document.createElement(
-    "div"
-    );
+    if(e.key === "Enter"){
 
-    if(
-    data.sender ==
-    "{{ current_user.username }}"
-    ){
-
-        div.className =
-        "message sent";
-
-        div.innerHTML = `
-            ${data.message}
-            <div class="tick">✓</div>
-        `;
+        sendMessage();
 
     }
-
-    else{
-
-        div.className =
-        "message received";
-
-        div.innerHTML =
-        data.message;
-
-    }
-
-    chatBox.appendChild(div);
-
-    chatBox.scrollTop =
-    chatBox.scrollHeight;
 
 }
-
-/* SHOW TYPING */
 
 );
 
+/* ================= RECEIVE MESSAGE ================= */
+
 socket.on(
+
+    "receive_message",
+
+    function(data){
+
+        let chatBox = document.getElementById(
+            "chat-box"
+        );
+
+        let div = document.createElement(
+            "div"
+        );
+
+        if(
+
+            data.sender ==
+
+            "{{ current_user.username }}"
+
+        ){
+
+            div.className = "message sent";
+
+            div.innerHTML = `
+                ${data.message}
+                <div class="tick">✓</div>
+            `;
+
+        }
+
+        else{
+
+            div.className = "message received";
+
+            div.innerHTML = data.message;
+
+        }
+
+        chatBox.appendChild(div);
+
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+    }
+
+);
+
+/* ================= TYPING ================= */
+
+const messageInput =
+document.getElementById(
+"message-input"
+);
+
+messageInput.addEventListener(
+
+"input",
+
+() => {
+
+    socket.emit(
+
+        "typing",
+
+        {
+
+            sender:
+            "{{ current_user.username }}"
+
+        }
+
+    );
+
+    clearTimeout(
+        window.typingTimer
+    );
+
+    window.typingTimer =
+    setTimeout(() => {
+
+        socket.emit(
+
+            "stop_typing",
+
+            {
+
+                sender:
+                "{{ current_user.username }}"
+
+            }
+
+        );
+
+    },1000);
+
+}
+
+);
+
+/* ================= SHOW TYPING ================= */
+
+socket.on(
+
 "show_typing",
 
 function(data){
 
     document.getElementById(
-    "typing-box"
+        "typing-box"
     ).innerHTML =
 
     data.sender +
     " is typing...";
 
-});
+}
 
-/* HIDE TYPING */
+);
+
+/* ================= HIDE TYPING ================= */
 
 socket.on(
+
 "hide_typing",
 
 function(data){
 
     document.getElementById(
-    "typing-box"
-    ).innerHTML="";
+        "typing-box"
+    ).innerHTML = "";
 
-});
+}
 
-/* VOICE RECORD */
+);
+
+/* ================= TOGGLE MENU ================= */
+
+function toggleMenu(){
+
+    let menu = document.getElementById(
+        "popup-menu"
+    );
+
+    if(menu.style.display == "flex"){
+
+        menu.style.display = "none";
+
+    }
+
+    else{
+
+        menu.style.display = "flex";
+
+    }
+
+}
+
+/* ================= VOICE RECORD ================= */
 
 let mediaRecorder;
 
@@ -401,9 +432,7 @@ async function startRecording(){
 
     const stream =
 
-    await navigator
-    .mediaDevices
-    .getUserMedia({
+    await navigator.mediaDevices.getUserMedia({
 
         audio:true
 
@@ -420,7 +449,7 @@ async function startRecording(){
     event => {
 
         audioChunks.push(
-        event.data
+            event.data
         );
 
     };
@@ -434,7 +463,9 @@ async function startRecording(){
             audioChunks,
 
             {
+
                 type:"audio/webm"
+
             }
 
         );
