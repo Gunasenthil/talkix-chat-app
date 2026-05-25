@@ -732,7 +732,6 @@ def delete_message(id):
     return redirect(request.referrer)
 
 # ================= SOCKET =================
-# ================= SOCKET =================
 
 @socketio.on("send_message")
 def handle_message(data):
@@ -806,24 +805,6 @@ def stop_typing(data):
     emit(
 
         "hide_typing",
-
-        {
-
-            "sender": data["sender"]
-
-        },
-
-        broadcast=True
-
-    )
-
-# ================= TYPING =================
-@socketio.on("typing")
-def typing(data):
-
-    emit(
-
-        "show_typing",
 
         {
 
