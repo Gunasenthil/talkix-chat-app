@@ -20,8 +20,6 @@ from flask_login import (
 
 from flask_socketio import SocketIO, emit
 
-)
-
 from werkzeug.utils import secure_filename
 
 from datetime import datetime
@@ -44,13 +42,7 @@ app.config["SECRET_KEY"] = "secret"
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///chat.db"
 
-app.config["SECRET_KEY"] = "secret"
-
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///chat.db"
-
 db = SQLAlchemy(app)
-
-socketio = SocketIO(app)
 
 login_manager = LoginManager()
 
