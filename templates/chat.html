@@ -28,7 +28,7 @@
 
         <img
         src="{{ url_for('static', filename='uploads/' + user.profile_pic) }}"
-        >
+        class="chat-profile">
 
         <div>
 
@@ -46,8 +46,9 @@
                 Last seen {{ user.last_seen }}
             </p>
 
-            <p id="typing-status"></p>
             {% endif %}
+
+            <p id="typing-box"></p>
 
         </div>
 
@@ -55,14 +56,7 @@
 
     <!-- MESSAGES -->
 
-   <div id="messages"></div>
-
-<div id="typing-box"></div>
-
-<div class="chat-box">
-    <input id="message" type="text">
-    <button onclick="sendMessage()">Send</button>
-</div>
+    <div id="chat-box" class="messages-container">
 
         {% for msg in messages %}
 
@@ -72,10 +66,7 @@
 
                     {{ msg.message }}
 
-                    <div style="
-                    font-size:13px;
-                    margin-top:5px;
-                    text-align:right;">
+                    <div class="tick">
 
                     {% if msg.seen %}
 
@@ -105,135 +96,155 @@
 
     </div>
 
-<!-- INPUT -->
+    <!-- INPUT AREA -->
 
-<div class="chat-input-area">
+    <div class="chat-input-area">
 
-    <!-- PLUS -->
+        <!-- PLUS -->
 
-    <div class="plus-wrapper">
+        <div class="plus-wrapper">
 
-        <button
-        class="plus-btn"
-        onclick="toggleMenu()">
-            +
-        </button>
+            <button
+            class="plus-btn"
+            onclick="toggleMenu()">
+                +
+            </button>
 
-        <!-- POPUP MENU -->
+            <!-- POPUP -->
 
-        <div id="popup-menu"
-        class="popup-menu">
+            <div id="popup-menu"
+            class="popup-menu">
 
-            <!-- IMAGE -->
+                <!-- IMAGE -->
 
-            <form
-            action="/send-image"
-            method="POST"
-            enctype="multipart/form-data">
-
-                <input
-                type="hidden"
-                name="receiver"
-                value="{{ username }}">
-
-                <label class="popup-item">
-
-                    🖼 Image
+                <form
+                action="/send-image"
+                method="POST"
+                enctype="multipart/form-data">
 
                     <input
-                    type="file"
-                    name="image"
-                    hidden
-                    onchange="this.form.submit()">
+                    type="hidden"
+                    name="receiver"
+                    value="{{ username }}">
 
-                </label>
+                    <label class="popup-item">
 
-            </form>
+                        🖼 Image
 
-            <!-- DOCUMENT -->
+                        <input
+                        type="file"
+                        name="image"
+                        hidden
+                        onchange="this.form.submit()">
 
-            <form
-            action="/send-document"
-            method="POST"
-            enctype="multipart/form-data">
+                    </label>
 
-                <input
-                type="hidden"
-                name="receiver"
-                value="{{ username }}">
+                </form>
 
-                <label class="popup-item">
+                <!-- DOCUMENT -->
 
-                    📄 Document
+                <form
+                action="/send-document"
+                method="POST"
+                enctype="multipart/form-data">
 
                     <input
-                    type="file"
-                    name="document"
-                    hidden
-                    onchange="this.form.submit()">
+                    type="hidden"
+                    name="receiver"
+                    value="{{ username }}">
 
-                </label>
+                    <label class="popup-item">
 
-            </form>
+                        📄 Document
+
+                        <input
+                        type="file"
+                        name="document"
+                        hidden
+                        onchange="this.form.submit()">
+
+                    </label>
+
+                </form>
+
+            </div>
 
         </div>
 
+        <!-- TEXT -->
+
+        <input
+        type="text"
+        id="message-input"
+        placeholder="Type message...">
+
+        <!-- MIC -->
+
+        <button
+        class="mic-btn"
+        onclick="startRecording()">
+            🎤
+        </button>
+
+        <!-- SEND -->
+
+        <button
+        class="send-btn"
+        onclick="sendMessage()">
+            ➤
+        </button>
+
     </div>
 
-    <!-- TEXT -->
-
-    <input
-    type="text"
-    id="message-input"
-    placeholder="Type message...">
-
-    <!-- MIC -->
-
-    <button
-    class="mic-btn"
-    onclick="startRecording()">
-        🎤
-    </button>
-
-    <!-- SEND -->
-
-    <button
-    class="send-btn"
-    onclick="sendMessage()">
-        ➤
-    </button>
-
 </div>
-   
+
 <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 
 <script>
 
 const socket = io();
 
-const messageInput = document.getElementById("message");
+/* TYPING */
 
-messageInput.addEventListener("input", () => {
+const messageInput =
+document.getElementById(
+"message-input"
+);
 
-    socket.emit("typing", {
+messageInput.addEventListener(
+"input",
+() => {
 
-        sender: "{{ current_user.username }}"
+    socket.emit(
+    "typing",
+    {
+
+        sender:
+        "{{ current_user.username }}"
 
     });
 
-    clearTimeout(window.typingTimer);
+    clearTimeout(
+    window.typingTimer
+    );
 
-    window.typingTimer = setTimeout(() => {
+    window.typingTimer =
+    setTimeout(() => {
 
-        socket.emit("stop_typing", {
+        socket.emit(
+        "stop_typing",
+        {
 
-            sender: "{{ current_user.username }}"
+            sender:
+            "{{ current_user.username }}"
 
         });
 
-    }, 1000);
+    },1000);
 
 });
+
+/* TOGGLE MENU */
 
 function toggleMenu(){
 
@@ -242,7 +253,9 @@ function toggleMenu(){
     "popup-menu"
     );
 
-    if(menu.style.display=="flex"){
+    if(
+    menu.style.display=="flex"
+    ){
 
         menu.style.display="none";
 
@@ -268,7 +281,9 @@ function sendMessage(){
     let message =
     input.value;
 
-    if(message.trim()==""){
+    if(
+    message.trim()==""
+    ){
 
         return;
 
@@ -299,30 +314,9 @@ function sendMessage(){
 /* RECEIVE MESSAGE */
 
 socket.on(
-
 "receive_message",
 
 function(data){
-
-    socket.on("show_typing", function(data){
-
-    let typingBox =
-    document.getElementById(
-        "typing-box"
-    );
-
-    typingBox.innerHTML =
-    data.sender + " is typing...";
-
-});
-
-socket.on("hide_typing", function(data){
-
-    document.getElementById(
-        "typing-box"
-    ).innerHTML = "";
-
-});
 
     let chatBox =
     document.getElementById(
@@ -342,6 +336,11 @@ socket.on("hide_typing", function(data){
         div.className =
         "message sent";
 
+        div.innerHTML = `
+            ${data.message}
+            <div class="tick">✓</div>
+        `;
+
     }
 
     else{
@@ -349,10 +348,10 @@ socket.on("hide_typing", function(data){
         div.className =
         "message received";
 
-    }
+        div.innerHTML =
+        data.message;
 
-    div.innerHTML =
-    data.message;
+    }
 
     chatBox.appendChild(div);
 
@@ -361,7 +360,36 @@ socket.on("hide_typing", function(data){
 
 }
 
+/* SHOW TYPING */
+
 );
+
+socket.on(
+"show_typing",
+
+function(data){
+
+    document.getElementById(
+    "typing-box"
+    ).innerHTML =
+
+    data.sender +
+    " is typing...";
+
+});
+
+/* HIDE TYPING */
+
+socket.on(
+"hide_typing",
+
+function(data){
+
+    document.getElementById(
+    "typing-box"
+    ).innerHTML="";
+
+});
 
 /* VOICE RECORD */
 
@@ -373,7 +401,9 @@ async function startRecording(){
 
     const stream =
 
-    await navigator.mediaDevices.getUserMedia({
+    await navigator
+    .mediaDevices
+    .getUserMedia({
 
         audio:true
 
@@ -386,7 +416,8 @@ async function startRecording(){
 
     audioChunks = [];
 
-    mediaRecorder.ondataavailable = event => {
+    mediaRecorder.ondataavailable =
+    event => {
 
         audioChunks.push(
         event.data
@@ -394,7 +425,8 @@ async function startRecording(){
 
     };
 
-    mediaRecorder.onstop = async () => {
+    mediaRecorder.onstop =
+    async () => {
 
         const audioBlob =
         new Blob(
@@ -455,5 +487,6 @@ async function startRecording(){
 }
 
 </script>
+
 </body>
 </html>
