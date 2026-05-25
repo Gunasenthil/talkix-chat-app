@@ -874,7 +874,7 @@ if __name__ == "__main__":
 
         app,
 
-        host=0,o,o,o",
+        host=0.o.o.o",
 
         port=5001,
 
