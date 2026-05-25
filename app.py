@@ -1,3 +1,6 @@
+import eventlet
+eventlet.monkey_patch()
+
 # ================= IMPORTS =================
 from flask import (
     Flask,
@@ -23,9 +26,6 @@ from flask_socketio import SocketIO, emit
 from werkzeug.utils import secure_filename
 
 from datetime import datetime
-
-import eventlet
-eventlet.monkey_patch()
 
 import random
 
