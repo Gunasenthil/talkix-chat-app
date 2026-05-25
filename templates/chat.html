@@ -98,63 +98,106 @@
 
     </div>
 
-    <!-- INPUT -->
+<!-- INPUT -->
 
-    <div class="chat-input-area">
+<div class="chat-input-area">
 
-        <!-- PLUS -->
+    <!-- PLUS -->
 
-        <button class="plus-btn"
+    <div class="plus-wrapper">
+
+        <button
+        class="plus-btn"
         onclick="toggleMenu()">
             +
         </button>
 
-        <!-- POPUP -->
+        <!-- POPUP MENU -->
 
         <div id="popup-menu"
-        style="
-        display:none;
-        position:absolute;
-        bottom:80px;
-        left:10px;
-        background:#1e293b;
-        padding:15px;
-        border-radius:20px;
-        z-index:999;
-        ">
+        class="popup-menu">
 
-            <p>🖼 Image</p>
+            <!-- IMAGE -->
 
-            <p>🎥 Video</p>
+            <form
+            action="/send-image"
+            method="POST"
+            enctype="multipart/form-data">
 
-            <p>📄 Document</p>
+                <input
+                type="hidden"
+                name="receiver"
+                value="{{ username }}">
+
+                <label class="popup-item">
+
+                    🖼 Image
+
+                    <input
+                    type="file"
+                    name="image"
+                    hidden
+                    onchange="this.form.submit()">
+
+                </label>
+
+            </form>
+
+            <!-- DOCUMENT -->
+
+            <form
+            action="/send-document"
+            method="POST"
+            enctype="multipart/form-data">
+
+                <input
+                type="hidden"
+                name="receiver"
+                value="{{ username }}">
+
+                <label class="popup-item">
+
+                    📄 Document
+
+                    <input
+                    type="file"
+                    name="document"
+                    hidden
+                    onchange="this.form.submit()">
+
+                </label>
+
+            </form>
 
         </div>
 
-        <!-- INPUT -->
-
-        <input
-        type="text"
-        id="message-input"
-        placeholder="Type message...">
-
-        <!-- MIC -->
-
-        <button class="mic-btn">
-            🎤
-        </button>
-
-        <!-- SEND -->
-
-        <button class="send-btn"
-        onclick="sendMessage()">
-            ➤
-        </button>
-
     </div>
 
-</div>
+    <!-- TEXT -->
 
+    <input
+    type="text"
+    id="message-input"
+    placeholder="Type message...">
+
+    <!-- MIC -->
+
+    <button
+    class="mic-btn"
+    onclick="startRecording()">
+        🎤
+    </button>
+
+    <!-- SEND -->
+
+    <button
+    class="send-btn"
+    onclick="sendMessage()">
+        ➤
+    </button>
+
+</div>
+   
 <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 
 <script>
@@ -168,19 +211,21 @@ function toggleMenu(){
     "popup-menu"
     );
 
-    if(menu.style.display=="none"){
-
-        menu.style.display="block";
-
-    }
-
-    else{
+    if(menu.style.display=="flex"){
 
         menu.style.display="none";
 
     }
 
+    else{
+
+        menu.style.display="flex";
+
+    }
+
 }
+
+/* SEND MESSAGE */
 
 function sendMessage(){
 
@@ -191,22 +236,6 @@ function sendMessage(){
 
     let message =
     input.value;
-
-socket.emit(
-
-"typing",
-
-{
-
-sender:
-"{{ current_user.username }}",
-
-receiver:
-"{{ username }}"
-
-}
-
-);
 
     if(message.trim()==""){
 
@@ -236,86 +265,144 @@ receiver:
 
 }
 
-socket.on(
-     
-     socket.on(
+/* RECEIVE MESSAGE */
 
-"show_typing",
+socket.on(
+
+"receive_message",
 
 function(data){
 
-if(
-data.sender ==
-"{{ username }}"
-){
+    let chatBox =
+    document.getElementById(
+    "chat-box"
+    );
 
-document.getElementById(
-"typing-status"
-).innerHTML =
-"Typing...";
+    let div =
+    document.createElement(
+    "div"
+    );
 
-setTimeout(() => {
+    if(
+    data.sender ==
+    "{{ current_user.username }}"
+    ){
 
-document.getElementById(
-"typing-status"
-).innerHTML = "";
-
-},2000);
-
-}
-
-}
-
-);
-
-    "receive_message",
-
-    function(data){
-
-        let chatBox =
-        document.getElementById(
-        "chat-box"
-        );
-
-        let div =
-        document.createElement(
-        "div"
-        );
-
-        if(
-        data.sender ==
-        "{{ current_user.username }}"
-        ){
-
-            div.className =
-            "message sent";
-
-            div.innerHTML =
-            data.message +
-            "<br><small>✓</small>";
-
-        }
-
-        else{
-
-            div.className =
-            "message received";
-
-            div.innerHTML =
-            data.message;
-
-        }
-
-        chatBox.appendChild(div);
-
-        chatBox.scrollTop =
-        chatBox.scrollHeight;
+        div.className =
+        "message sent";
 
     }
 
+    else{
+
+        div.className =
+        "message received";
+
+    }
+
+    div.innerHTML =
+    data.message;
+
+    chatBox.appendChild(div);
+
+    chatBox.scrollTop =
+    chatBox.scrollHeight;
+
+}
+
 );
 
-</script>
+/* VOICE RECORD */
 
+let mediaRecorder;
+
+let audioChunks = [];
+
+async function startRecording(){
+
+    const stream =
+
+    await navigator.mediaDevices.getUserMedia({
+
+        audio:true
+
+    });
+
+    mediaRecorder =
+    new MediaRecorder(stream);
+
+    mediaRecorder.start();
+
+    audioChunks = [];
+
+    mediaRecorder.ondataavailable = event => {
+
+        audioChunks.push(
+        event.data
+        );
+
+    };
+
+    mediaRecorder.onstop = async () => {
+
+        const audioBlob =
+        new Blob(
+
+            audioChunks,
+
+            {
+                type:"audio/webm"
+            }
+
+        );
+
+        const formData =
+        new FormData();
+
+        formData.append(
+
+            "voice",
+
+            audioBlob,
+
+            "voice.webm"
+
+        );
+
+        formData.append(
+
+            "receiver",
+
+            "{{ username }}"
+
+        );
+
+        await fetch(
+
+            "/send-voice",
+
+            {
+
+                method:"POST",
+
+                body:formData
+
+            }
+
+        );
+
+        location.reload();
+
+    };
+
+    setTimeout(() => {
+
+        mediaRecorder.stop();
+
+    },5000);
+
+}
+
+</script>
 </body>
 </html>

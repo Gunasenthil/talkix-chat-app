@@ -728,26 +728,35 @@ def delete_message(id):
     return redirect(request.referrer)
 
 # ================= SOCKET =================
-@socketio.on("send_message")
-def handle_message(data):
+@app.route("/send-image", methods=["POST"])
+@login_required
+def send_image():
+
+    image = request.files["image"]
+
+    filename = secure_filename(
+        image.filename
+    )
+
+    image.save(
+        "static/uploads/" + filename
+    )
 
     new_message = Message(
 
-        sender=data["sender"],
+        sender=current_user.username,
 
-        receiver=data["receiver"],
+        receiver=request.form["receiver"],
 
-        message=data["message"],
+        message="",
 
-        image="",
+        image=filename,
 
         voice="",
 
         link="",
 
-        document="",
-
-        seen=False
+        document=""
 
     )
 
@@ -755,16 +764,50 @@ def handle_message(data):
 
     db.session.commit()
 
-    emit(
+    return redirect(
+        "/chat/" + request.form["receiver"]
+    )
 
-        "receive_message",
 
-        data,
+@app.route("/send-document", methods=["POST"])
+@login_required
+def send_document():
 
-        broadcast=True
+    document = request.files["document"]
+
+    filename = secure_filename(
+        document.filename
+    )
+
+    document.save(
+        "static/uploads/" + filename
+    )
+
+    new_message = Message(
+
+        sender=current_user.username,
+
+        receiver=request.form["receiver"],
+
+        message="",
+
+        image="",
+
+        voice="",
+
+        link="",
+
+        document=filename
 
     )
 
+    db.session.add(new_message)
+
+    db.session.commit()
+
+    return redirect(
+        "/chat/" + request.form["receiver"]
+    )
 # ================= TYPING =================
 @socketio.on("typing")
 def typing(data):
@@ -783,6 +826,23 @@ def typing(data):
 
     )
 
+# ================= STOP TYPING =================
+@socketio.on("stop_typing")
+def stop_typing(data):
+
+    emit(
+
+        "hide_typing",
+
+        {
+
+            "sender": data["sender"]
+
+        },
+
+        broadcast=True
+
+    )
 # ================= DELETE STORY =================
 @app.route("/delete-story/<int:id>")
 @login_required
