@@ -55,7 +55,14 @@
 
     <!-- MESSAGES -->
 
-    <div class="chat-messages" id="chat-box">
+   <div id="messages"></div>
+
+<div id="typing-box"></div>
+
+<div class="chat-box">
+    <input id="message" type="text">
+    <button onclick="sendMessage()">Send</button>
+</div>
 
         {% for msg in messages %}
 
@@ -204,6 +211,30 @@
 
 const socket = io();
 
+const messageInput = document.getElementById("message");
+
+messageInput.addEventListener("input", () => {
+
+    socket.emit("typing", {
+
+        sender: "{{ current_user.username }}"
+
+    });
+
+    clearTimeout(window.typingTimer);
+
+    window.typingTimer = setTimeout(() => {
+
+        socket.emit("stop_typing", {
+
+            sender: "{{ current_user.username }}"
+
+        });
+
+    }, 1000);
+
+});
+
 function toggleMenu(){
 
     let menu =
@@ -272,6 +303,26 @@ socket.on(
 "receive_message",
 
 function(data){
+
+    socket.on("show_typing", function(data){
+
+    let typingBox =
+    document.getElementById(
+        "typing-box"
+    );
+
+    typingBox.innerHTML =
+    data.sender + " is typing...";
+
+});
+
+socket.on("hide_typing", function(data){
+
+    document.getElementById(
+        "typing-box"
+    ).innerHTML = "";
+
+});
 
     let chatBox =
     document.getElementById(

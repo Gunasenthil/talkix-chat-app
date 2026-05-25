@@ -1521,3 +1521,15 @@ background:
 rgba(255,255,255,0.15);
 
 }
+
+#typing-box{
+
+    color:#38bdf8;
+
+    font-size:14px;
+
+    padding:5px 15px;
+
+    font-style:italic;
+
+}
