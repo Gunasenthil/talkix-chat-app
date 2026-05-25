@@ -29,9 +29,6 @@ from datetime import datetime
 import random
 
 # ================= APP =================
-app = Flask(__name__)
-
-socketio = SocketIO(app, cors_allowed_origins="*")
 
 app = Flask(__name__)
 
