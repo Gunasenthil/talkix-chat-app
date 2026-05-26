@@ -17,46 +17,46 @@
 
 <div class="chat-container">
 
-    <!-- HEADER -->
+    <!-- ================= TOP HEADER ================= -->
 
     <div class="chat-header">
 
+        <!-- BACK BUTTON -->
+
         <a href="/home"
-        style="text-decoration:none;color:white;font-size:25px;">
+        class="back-btn">
             ←
         </a>
 
-        <img
-        src="{{ url_for('static', filename='uploads/' + user.profile_pic) }}"
-        class="chat-profile">
+        <!-- PROFILE -->
 
-        <div>
+        <a href="/profile/{{ user.username }}"
+        class="profile-section">
 
-            <h3>{{ user.name }}</h3>
+            <img
+            src="{{ url_for('static', filename='uploads/' + user.profile_pic) }}"
+            class="chat-profile">
 
-            {% if user.online %}
+            <div>
 
-            <p style="color:lime;">
-                Online
-            </p>
+                <h3>
+                    {{ user.name }}
+                </h3>
 
-            {% else %}
+                <p>
+                    @{{ user.username }}
+                </p>
 
-            <p style="color:gray;">
-                Last seen {{ user.last_seen }}
-            </p>
+            </div>
 
-            {% endif %}
-
-            <p id="typing-box"></p>
-
-        </div>
+        </a>
 
     </div>
 
-    <!-- CHAT BOX -->
+    <!-- ================= CHAT BOX ================= -->
 
-    <div id="chat-box" class="messages-container">
+    <div id="chat-box"
+    class="messages-container">
 
         {% for msg in messages %}
 
@@ -65,20 +65,6 @@
                 <div class="message sent">
 
                     {{ msg.message }}
-
-                    <div class="tick">
-
-                        {% if msg.seen %}
-
-                            ✓✓
-
-                        {% else %}
-
-                            ✓
-
-                        {% endif %}
-
-                    </div>
 
                 </div>
 
@@ -96,25 +82,28 @@
 
     </div>
 
-<!-- INPUT -->
+    <!-- ================= INPUT ================= -->
 
-<div class="chat-input-area">
+    <div class="chat-input-area">
 
-    <input
-    type="text"
-    id="message-input"
-    placeholder="Type message...">
+        <input
+        type="text"
+        id="message-input"
+        placeholder="Type a message...">
 
-    <button
-    class="send-btn"
-    onclick="sendMessage()">
-        ➤
-    </button>
+        <button
+        class="send-btn"
+        onclick="sendMessage()">
+
+            ➤
+
+        </button>
+
+    </div>
 
 </div>
 
-       
-<!-- SOCKET -->
+<!-- ================= SOCKET ================= -->
 
 <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 
@@ -126,13 +115,15 @@ const socket = io();
 
 function sendMessage(){
 
-    let input = document.getElementById(
+    let input =
+    document.getElementById(
         "message-input"
     );
 
-    let message = input.value;
+    let message =
+    input.value;
 
-    if(message.trim() == ""){
+    if(message.trim()==""){
 
         return;
 
@@ -150,35 +141,15 @@ function sendMessage(){
             receiver:
             "{{ username }}",
 
-            message: message
+            message:message
 
         }
 
     );
 
-    input.value = "";
+    input.value="";
 
 }
-
-/* ================= ENTER KEY ================= */
-
-document.getElementById(
-"message-input"
-).addEventListener(
-
-"keypress",
-
-function(e){
-
-    if(e.key === "Enter"){
-
-        sendMessage();
-
-    }
-
-}
-
-);
 
 /* ================= RECEIVE MESSAGE ================= */
 
@@ -188,256 +159,98 @@ socket.on(
 
     function(data){
 
-        let chatBox = document.getElementById(
-            "chat-box"
-        );
-
-        let div = document.createElement(
-            "div"
-        );
-
         if(
 
-            data.sender ==
+            (
+                data.sender ==
+                "{{ username }}"
+            )
 
-            "{{ current_user.username }}"
+            ||
+
+            (
+                data.sender ==
+                "{{ current_user.username }}"
+            )
 
         ){
 
-            div.className = "message sent";
+            let chatBox =
+            document.getElementById(
+                "chat-box"
+            );
 
-            div.innerHTML = `
-                ${data.message}
-                <div class="tick">✓</div>
-            `;
+            let div =
+            document.createElement(
+                "div"
+            );
 
-        }
+            if(
 
-        else{
-
-            div.className = "message received";
-
-            div.innerHTML = data.message;
-
-        }
-
-        chatBox.appendChild(div);
-
-        chatBox.scrollTop = chatBox.scrollHeight;
-
-    }
-
-);
-
-/* ================= TYPING ================= */
-
-const messageInput =
-document.getElementById(
-"message-input"
-);
-
-messageInput.addEventListener(
-
-"input",
-
-() => {
-
-    socket.emit(
-
-        "typing",
-
-        {
-
-            sender:
-            "{{ current_user.username }}"
-
-        }
-
-    );
-
-    clearTimeout(
-        window.typingTimer
-    );
-
-    window.typingTimer =
-    setTimeout(() => {
-
-        socket.emit(
-
-            "stop_typing",
-
-            {
-
-                sender:
+                data.sender ==
                 "{{ current_user.username }}"
 
+            ){
+
+                div.className =
+                "message sent";
+
             }
 
-        );
+            else{
 
-    },1000);
+                div.className =
+                "message received";
 
-}
+            }
+
+            div.innerHTML =
+            data.message;
+
+            chatBox.appendChild(div);
+
+            chatBox.scrollTop =
+            chatBox.scrollHeight;
+
+        }
+
+    }
 
 );
 
-/* ================= SHOW TYPING ================= */
+/* ================= ENTER KEY ================= */
 
-socket.on(
+document.getElementById(
+    "message-input"
+).addEventListener(
 
-"show_typing",
+    "keypress",
 
-function(data){
+    function(e){
 
+        if(e.key === "Enter"){
+
+            sendMessage();
+
+        }
+
+    }
+
+);
+
+/* ================= AUTO SCROLL ================= */
+
+window.onload = function(){
+
+    let chatBox =
     document.getElementById(
-        "typing-box"
-    ).innerHTML =
-
-    data.sender +
-    " is typing...";
-
-}
-
-);
-
-/* ================= HIDE TYPING ================= */
-
-socket.on(
-
-"hide_typing",
-
-function(data){
-
-    document.getElementById(
-        "typing-box"
-    ).innerHTML = "";
-
-}
-
-);
-
-/* ================= TOGGLE MENU ================= */
-
-function toggleMenu(){
-
-    let menu = document.getElementById(
-        "popup-menu"
+        "chat-box"
     );
 
-    if(menu.style.display == "flex"){
+    chatBox.scrollTop =
+    chatBox.scrollHeight;
 
-        menu.style.display = "none";
-
-    }
-
-    else{
-
-        menu.style.display = "flex";
-
-    }
-
-}
-
-/* ================= VOICE RECORD ================= */
-
-let mediaRecorder;
-
-let audioChunks = [];
-
-async function startRecording(){
-
-    const stream =
-
-    await navigator.mediaDevices.getUserMedia({
-
-        audio:true
-
-    });
-
-    mediaRecorder =
-    new MediaRecorder(stream);
-
-    mediaRecorder.start();
-
-    audioChunks = [];
-
-    mediaRecorder.ondataavailable =
-    event => {
-
-        audioChunks.push(
-            event.data
-        );
-
-    };
-
-    mediaRecorder.onstop =
-    async () => {
-
-        const audioBlob =
-        new Blob(
-
-            audioChunks,
-
-            {
-
-                type:"audio/webm"
-
-            }
-
-        );
-
-        const formData =
-        new FormData();
-
-        formData.append(
-
-            "voice",
-
-            audioBlob,
-
-            "voice.webm"
-
-        );
-
-        formData.append(
-
-            "receiver",
-
-            "{{ username }}"
-
-        );
-
-        await fetch(
-
-            "/send-voice",
-
-            {
-
-                method:"POST",
-
-                body:formData
-
-            }
-
-        );
-
-        location.reload();
-
-    };
-
-    setTimeout(() => {
-
-        mediaRecorder.stop();
-
-    },5000);
-
-}
-
-  setInterval(() => {
-
-    location.reload();
-
-}, 2000);
+};
 
 </script>
 

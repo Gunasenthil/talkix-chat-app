@@ -1,5 +1,5 @@
-
 # ================= IMPORTS =================
+
 from flask import (
     Flask,
     render_template,
@@ -27,25 +27,25 @@ from datetime import datetime
 
 import random
 
-
 # ================= APP =================
 
 app = Flask(__name__)
-
-socketio = SocketIO(
-
-    app,
-
-    cors_allowed_origins="*",  
-  
-
-)
 
 app.config["SECRET_KEY"] = "secret"
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///chat.db"
 
 db = SQLAlchemy(app)
+
+socketio = SocketIO(
+
+    app,
+
+    cors_allowed_origins="*",
+
+    async_mode="threading"
+
+)
 
 login_manager = LoginManager()
 
@@ -54,6 +54,7 @@ login_manager.init_app(app)
 login_manager.login_view = "login"
 
 # ================= USER =================
+
 class User(UserMixin, db.Model):
 
     id = db.Column(
@@ -98,16 +99,8 @@ class User(UserMixin, db.Model):
         db.String(300)
     )
 
-    online = db.Column(
-        db.Boolean,
-        default=False
-    )
-
-    last_seen = db.Column(
-        db.String(100)
-    )
-
 # ================= FOLLOW =================
+
 class Follow(db.Model):
 
     id = db.Column(
@@ -124,6 +117,7 @@ class Follow(db.Model):
     )
 
 # ================= MESSAGE =================
+
 class Message(db.Model):
 
     id = db.Column(
@@ -143,28 +137,8 @@ class Message(db.Model):
         db.String(1000)
     )
 
-    image = db.Column(
-        db.String(300)
-    )
-
-    voice = db.Column(
-        db.String(300)
-    )
-
-    link = db.Column(
-        db.String(500)
-    )
-
-    document = db.Column(
-        db.String(300)
-    )
-
-    seen = db.Column(
-        db.Boolean,
-        default=False
-    )
-
 # ================= STORY =================
+
 class Story(db.Model):
 
     id = db.Column(
@@ -180,28 +154,14 @@ class Story(db.Model):
         db.String(300)
     )
 
-# ================= STORY VIEW =================
-class StoryView(db.Model):
-
-    id = db.Column(
-        db.Integer,
-        primary_key=True
-    )
-
-    story_id = db.Column(
-        db.Integer
-    )
-
-    viewer = db.Column(
-        db.String(100)
-    )
-
 # ================= CREATE DB =================
+
 with app.app_context():
 
     db.create_all()
 
 # ================= LOGIN LOADER =================
+
 @login_manager.user_loader
 def load_user(user_id):
 
@@ -210,327 +170,14 @@ def load_user(user_id):
     )
 
 # ================= FIRST PAGE =================
+
 @app.route("/")
 def first_page():
 
-    return redirect("/register")
-
-# ================= HOME =================
-@app.route("/home")
-@login_required
-def home():
-
-    users = User.query.filter(
-        User.id != current_user.id
-    ).all()
-
-    stories = Story.query.all()
-
-    return render_template(
-
-        "index.html",
-
-        users=users,
-
-        stories=stories
-
-    )
-
-# ================= ACCOUNT =================
-@app.route("/account")
-@login_required
-def account():
-
-    return render_template(
-        "account.html"
-    )
-
-# ================= PROFILE =================
-@app.route("/profile/<username>")
-@login_required
-def profile(username):
-
-    user = User.query.filter_by(
-        username=username
-    ).first()
-
-    followers = Follow.query.filter_by(
-        following=username
-    ).count()
-
-    following = Follow.query.filter_by(
-        follower=username
-    ).count()
-
-    already_following = Follow.query.filter_by(
-        follower=current_user.username,
-        following=username
-    ).first()
-
-    return render_template(
-
-        "profile.html",
-
-        user=user,
-
-        followers=followers,
-
-        following=following,
-
-        already_following=already_following
-
-    )
-
-# ================= FOLLOW =================
-@app.route("/follow/<username>")
-@login_required
-def follow(username):
-
-    check = Follow.query.filter_by(
-        follower=current_user.username,
-        following=username
-    ).first()
-
-    if not check:
-
-        new_follow = Follow(
-
-            follower=current_user.username,
-
-            following=username
-
-        )
-
-        db.session.add(new_follow)
-
-        db.session.commit()
-
-    return redirect(
-        "/profile/" + username
-    )
-
-# ================= EDIT PROFILE =================
-@app.route(
-    "/edit-profile",
-    methods=["GET", "POST"]
-)
-@login_required
-def edit_profile():
-
-    if request.method == "POST":
-
-        current_user.name = request.form.get(
-            "name"
-        )
-
-        current_user.bio = request.form.get(
-            "bio"
-        )
-
-        profile = request.files.get(
-            "profile_pic"
-        )
-
-        if profile and profile.filename != "":
-
-            filename = secure_filename(
-                profile.filename
-            )
-
-            profile.save(
-                "static/uploads/" + filename
-            )
-
-            current_user.profile_pic = filename
-
-        db.session.commit()
-
-        return redirect(
-            "/profile/" +
-            current_user.username
-        )
-
-    return render_template(
-        "edit_profile.html"
-    )
-
-# ================= MEDIA =================
-@app.route("/media")
-@login_required
-def media():
-
-    images = Message.query.filter(
-
-        (
-            Message.sender ==
-            current_user.username
-        )
-
-        |
-
-        (
-            Message.receiver ==
-            current_user.username
-        ),
-
-        Message.image != ""
-
-    ).all()
-
-    voices = Message.query.filter(
-
-        (
-            Message.sender ==
-            current_user.username
-        )
-
-        |
-
-        (
-            Message.receiver ==
-            current_user.username
-        ),
-
-        Message.voice != ""
-
-    ).all()
-
-    documents = Message.query.filter(
-
-        (
-            Message.sender ==
-            current_user.username
-        )
-
-        |
-
-        (
-            Message.receiver ==
-            current_user.username
-        ),
-
-        Message.document != ""
-
-    ).all()
-
-    links = Message.query.filter(
-
-        (
-            Message.sender ==
-            current_user.username
-        )
-
-        |
-
-        (
-            Message.receiver ==
-            current_user.username
-        ),
-
-        Message.link != ""
-
-    ).all()
-
-    return render_template(
-
-        "media.html",
-
-        images=images,
-
-        voices=voices,
-
-        documents=documents,
-
-        links=links
-
-    )
-
-# ================= STORIES =================
-@app.route(
-    "/stories",
-    methods=["GET", "POST"]
-)
-@login_required
-def stories():
-
-    if request.method == "POST":
-
-        image = request.files["image"]
-
-        filename = secure_filename(
-            image.filename
-        )
-
-        image.save(
-            "static/stories/" + filename
-        )
-
-        new_story = Story(
-
-            username=current_user.username,
-
-            image=filename
-
-        )
-
-        db.session.add(new_story)
-
-        db.session.commit()
-
-    stories = Story.query.all()
-
-    return render_template(
-
-        "stories.html",
-
-        stories=stories
-
-    )
-
-# ================= VIEW STORY =================
-@app.route("/view-story/<int:id>")
-@login_required
-def view_story(id):
-
-    story = Story.query.get(id)
-
-    check = StoryView.query.filter_by(
-
-        story_id=id,
-
-        viewer=current_user.username
-
-    ).first()
-
-    if not check:
-
-        new_view = StoryView(
-
-            story_id=id,
-
-            viewer=current_user.username
-
-        )
-
-        db.session.add(new_view)
-
-        db.session.commit()
-
-    viewers = StoryView.query.filter_by(
-        story_id=id
-    ).all()
-
-    return render_template(
-
-        "view_story.html",
-
-        story=story,
-
-        viewers=viewers
-
-    )
+    return redirect("/login")
 
 # ================= REGISTER =================
+
 @app.route(
     "/register",
     methods=["GET", "POST"]
@@ -573,6 +220,14 @@ def register():
 
             return "Wrong OTP"
 
+        check = User.query.filter_by(
+            username=username
+        ).first()
+
+        if check:
+
+            return "Username already exists"
+
         new_user = User(
 
             email=email,
@@ -591,11 +246,7 @@ def register():
 
             password=password,
 
-            profile_pic=filename,
-
-            online=False,
-
-            last_seen="Never"
+            profile_pic=filename
 
         )
 
@@ -610,6 +261,7 @@ def register():
     )
 
 # ================= SEND OTP =================
+
 @app.route("/send-otp")
 def send_otp():
 
@@ -625,6 +277,7 @@ def send_otp():
     return otp
 
 # ================= LOGIN =================
+
 @app.route(
     "/login",
     methods=["GET", "POST"]
@@ -647,10 +300,6 @@ def login():
 
         if user and user.password == password:
 
-            user.online = True
-
-            db.session.commit()
-
             login_user(user)
 
             return redirect("/home")
@@ -660,23 +309,155 @@ def login():
     )
 
 # ================= LOGOUT =================
+
 @app.route("/logout")
 @login_required
 def logout():
-
-    current_user.online = False
-
-    current_user.last_seen = str(
-        datetime.now()
-    )
-
-    db.session.commit()
 
     logout_user()
 
     return redirect("/login")
 
+# ================= HOME =================
+
+@app.route("/home")
+@login_required
+def home():
+
+    follows = Follow.query.filter_by(
+
+        follower=current_user.username
+
+    ).all()
+
+    users = []
+
+    for f in follows:
+
+        user = User.query.filter_by(
+
+            username=f.following
+
+        ).first()
+
+        if user:
+
+            users.append(user)
+
+    stories = Story.query.all()
+
+    return render_template(
+
+        "index.html",
+
+        users=users,
+
+        stories=stories
+
+    )
+
+# ================= SEARCH =================
+
+@app.route("/search")
+@login_required
+def search():
+
+    q = request.args.get("q")
+
+    if q:
+
+        users = User.query.filter(
+
+            User.username.contains(q)
+
+        ).all()
+
+    else:
+
+        users = []
+
+    return render_template(
+
+        "search.html",
+
+        users=users
+
+    )
+
+# ================= PROFILE =================
+
+@app.route("/profile/<username>")
+@login_required
+def profile(username):
+
+    user = User.query.filter_by(
+        username=username
+    ).first()
+
+    followers = Follow.query.filter_by(
+        following=username
+    ).count()
+
+    following = Follow.query.filter_by(
+        follower=username
+    ).count()
+
+    already_following = Follow.query.filter_by(
+
+        follower=current_user.username,
+
+        following=username
+
+    ).first()
+
+    return render_template(
+
+        "profile.html",
+
+        user=user,
+
+        followers=followers,
+
+        following=following,
+
+        already_following=already_following
+
+    )
+
+# ================= FOLLOW =================
+
+@app.route("/follow/<username>")
+@login_required
+def follow(username):
+
+    check = Follow.query.filter_by(
+
+        follower=current_user.username,
+
+        following=username
+
+    ).first()
+
+    if not check:
+
+        new_follow = Follow(
+
+            follower=current_user.username,
+
+            following=username
+
+        )
+
+        db.session.add(new_follow)
+
+        db.session.commit()
+
+    return redirect(
+        "/profile/" + username
+    )
+
 # ================= CHAT =================
+
 @app.route("/chat/<username>")
 @login_required
 def chat(username):
@@ -688,24 +469,28 @@ def chat(username):
     messages = Message.query.filter(
 
         (
+
             (Message.sender == current_user.username)
 
             &
 
             (Message.receiver == username)
+
         )
 
         |
 
         (
+
             (Message.sender == username)
 
             &
 
             (Message.receiver == current_user.username)
+
         )
 
-    ).all()
+    ).order_by(Message.id).all()
 
     return render_template(
 
@@ -719,25 +504,10 @@ def chat(username):
 
     )
 
-# ================= DELETE MESSAGE =================
-@app.route("/delete-message/<int:id>")
-@login_required
-def delete_message(id):
-
-    msg = Message.query.get(id)
-
-    if msg and msg.sender == current_user.username:
-
-        db.session.delete(msg)
-
-        db.session.commit()
-
-    return redirect(request.referrer)
-
-# ================= SOCKET =================
+# ================= SOCKET MESSAGE =================
 
 @socketio.on("send_message")
-def handle_message(data):
+def send_message(data):
 
     new_message = Message(
 
@@ -745,17 +515,7 @@ def handle_message(data):
 
         receiver=data["receiver"],
 
-        message=data["message"],
-
-        image="",
-
-        voice="",
-
-        link="",
-
-        document="",
-
-        seen=False
+        message=data["message"]
 
     )
 
@@ -781,77 +541,67 @@ def handle_message(data):
 
     )
 
+# ================= DELETE MESSAGE =================
 
-
-@socketio.on("typing")
-def typing(data):
-
-    emit(
-
-        "show_typing",
-
-        {
-
-            "sender": data["sender"]
-
-        },
-
-        broadcast=True
-
-    )
-
-
-
-@socketio.on("stop_typing")
-def stop_typing(data):
-
-    emit(
-
-        "hide_typing",
-
-        {
-
-            "sender": data["sender"]
-
-        },
-
-        broadcast=True
-
-    )
-
-# ================= STOP TYPING =================
-@socketio.on("stop_typing")
-def stop_typing(data):
-
-    emit(
-
-        "hide_typing",
-
-        {
-
-            "sender": data["sender"]
-
-        },
-
-        broadcast=True
-
-    )
-# ================= DELETE STORY =================
-@app.route("/delete-story/<int:id>")
+@app.route("/delete-message/<int:id>")
 @login_required
-def delete_story(id):
+def delete_message(id):
 
-    story = Story.query.get(id)
+    msg = Message.query.get(id)
 
-    if story.username == current_user.username:
+    if msg and msg.sender == current_user.username:
 
-        db.session.delete(story)
+        db.session.delete(msg)
 
         db.session.commit()
 
-    return redirect("/stories")
+    return redirect(request.referrer)
+
+# ================= STORIES =================
+
+@app.route(
+    "/stories",
+    methods=["GET", "POST"]
+)
+@login_required
+def stories():
+
+    if request.method == "POST":
+
+        image = request.files["image"]
+
+        filename = secure_filename(
+            image.filename
+        )
+
+        image.save(
+            "static/stories/" + filename
+        )
+
+        new_story = Story(
+
+            username=current_user.username,
+
+            image=filename
+
+        )
+
+        db.session.add(new_story)
+
+        db.session.commit()
+
+    stories = Story.query.all()
+
+    return render_template(
+
+        "stories.html",
+
+        stories=stories
+
+    )
 
 # ================= RUN =================
+
 if __name__ == "__main__":
 
     socketio.run(
@@ -862,8 +612,6 @@ if __name__ == "__main__":
 
         port=5001,
 
-        debug=True,
-
-        allow_unsafe_werkzeug=True
+        debug=True
 
     )
