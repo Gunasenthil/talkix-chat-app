@@ -96,80 +96,22 @@
 
     </div>
 
-    <!-- INPUT AREA -->
+<!-- INPUT -->
 
-    <div class="chat-input-area">
+<div class="chat-input-area">
 
-        <!-- PLUS -->
+    <input
+    type="text"
+    id="message-input"
+    placeholder="Type message...">
 
-        <div class="plus-wrapper">
+    <button
+    class="send-btn"
+    onclick="sendMessage()">
+        ➤
+    </button>
 
-            <button
-            class="plus-btn"
-            onclick="toggleMenu()">
-                +
-            </button>
-
-            <!-- POPUP MENU -->
-
-            <div id="popup-menu"
-            class="popup-menu">
-
-                <!-- IMAGE -->
-
-                <form
-                action="/send-image"
-                method="POST"
-                enctype="multipart/form-data">
-
-                    <input
-                    type="hidden"
-                    name="receiver"
-                    value="{{ username }}">
-
-                    <label class="popup-item">
-
-                        🖼 Image
-
-                        <input
-                        type="file"
-                        name="image"
-                        hidden
-                        onchange="this.form.submit()">
-
-                    </label>
-
-                </form>
-
-                <!-- DOCUMENT -->
-
-                <form
-                action="/send-document"
-                method="POST"
-                enctype="multipart/form-data">
-
-                    <input
-                    type="hidden"
-                    name="receiver"
-                    value="{{ username }}">
-
-                    <label class="popup-item">
-
-                        📄 Document
-
-                        <input
-                        type="file"
-                        name="document"
-                        hidden
-                        onchange="this.form.submit()">
-
-                    </label>
-
-                </form>
-
-            </div>
-
-        </div>
+</div>
 
         <!-- MESSAGE INPUT -->
 
