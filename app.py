@@ -1,5 +1,3 @@
-import eventlet
-eventlet.monkey_patch()
 
 # ================= IMPORTS =================
 from flask import (
@@ -38,9 +36,8 @@ socketio = SocketIO(
 
     app,
 
-    cors_allowed_origins="*",
-
-    async_mode="eventlet"
+    cors_allowed_origins="*",  
+  
 
 )
 
