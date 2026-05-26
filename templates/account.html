@@ -1,59 +1,156 @@
-
-
 <!DOCTYPE html>
 <html>
 
 <head>
- <meta
+
+<meta
 name="viewport"
 content="width=device-width, initial-scale=1.0">
-    <title>
-        Account
-    </title>
 
-    <link rel="stylesheet"
-    href="{{ url_for('static', filename='style.css') }}">
+<title>
+Account
+</title>
+
+<link rel="stylesheet"
+href="{{ url_for('static', filename='style.css') }}">
 
 </head>
 
 <body>
 
-<div class="profile-page">
+<div class="account-page">
 
-    <img
+    <!-- ================= TOP BAR ================= -->
 
-    src="{{ url_for('static', filename='uploads/' + current_user.profile_pic) }}"
+    <div class="account-topbar">
 
-    class="big-profile"
+        <a
+        href="/home"
+        class="account-back">
 
-    >
+            ←
 
-    <h1>
-        {{ current_user.name }}
-    </h1>
+        </a>
 
-    <p>
-        @{{ current_user.username }}
-    </p>
+        <h2>
+            Account
+        </h2>
 
-    <p>
-        {{ current_user.bio }}
-    </p>
+    </div>
 
-    <h3>
-        📧 Email:
-        {{ current_user.email }}
-    </h3>
+    <!-- ================= ACCOUNT CARD ================= -->
 
-    <h3>
-        📱 Phone:
-        {{ current_user.phone }}
-    </h3>
+    <div class="account-card">
 
-    <h3>
-        🔒 Password:
-        {{ current_user.password }}
-    </h3>
+        <!-- PROFILE IMAGE -->
+
+        <img
+
+        src="{{ url_for('static', filename='uploads/' + current_user.profile_pic) }}"
+
+        class="account-profile"
+
+        >
+
+        <!-- NAME -->
+
+        <h1>
+            {{ current_user.name }}
+        </h1>
+
+        <!-- USERNAME -->
+
+        <p class="account-username">
+
+            @{{ current_user.username }}
+
+        </p>
+
+        <!-- BIO -->
+
+        <p class="account-bio">
+
+            {{ current_user.bio }}
+
+        </p>
+
+        <!-- INFO BOXES -->
+
+        <div class="account-info-box">
+
+            <span>
+                📧 Email
+            </span>
+
+            <p>
+                {{ current_user.email }}
+            </p>
+
+        </div>
+
+        <div class="account-info-box">
+
+            <span>
+                📱 Phone
+            </span>
+
+            <p>
+                {{ current_user.phone }}
+            </p>
+
+        </div>
+
+        <div class="account-info-box">
+
+            <span>
+                🎂 Date Of Birth
+            </span>
+
+            <p>
+                {{ current_user.dob }}
+            </p>
+
+        </div>
+
+        <div class="account-info-box">
+
+            <span>
+                ⚧ Gender
+            </span>
+
+            <p>
+                {{ current_user.gender }}
+            </p>
+
+        </div>
+
+        <!-- BUTTONS -->
+
+        <div class="account-buttons">
+
+            <a href="/edit-profile">
+
+                <button class="edit-account-btn">
+
+                    Edit Profile
+
+                </button>
+
+            </a>
+
+            <a href="/logout">
+
+                <button class="logout-account-btn">
+
+                    Logout
+
+                </button>
+
+            </a>
+
+        </div>
+
+    </div>
 
 </div>
 

@@ -2,9 +2,11 @@
 <html>
 
 <head>
+
 <meta
 name="viewport"
 content="width=device-width, initial-scale=1.0">
+
 <title>
 Profile
 </title>
@@ -16,95 +18,147 @@ href="{{ url_for('static', filename='style.css') }}">
 
 <body>
 
-<div class="profile-page">
+<div class="profile-container">
 
-<img
+    <!-- ================= TOP BAR ================= -->
 
-src="{{ url_for('static', filename='uploads/' + user.profile_pic) }}"
+    <div class="profile-topbar">
 
-class="big-profile"
+        <a
+        href="/home"
+        class="profile-back">
 
->
+            ←
 
-<h1>
-{{ user.name }}
-</h1>
+        </a>
 
-<h3>
-@{{ user.username }}
-</h3>
+        <h2>
+            Profile
+        </h2>
 
-<p>
-{{ user.bio }}
-</p>
+    </div>
 
-<div class="follow-info">
+    <!-- ================= PROFILE CARD ================= -->
 
-<h3>
-Followers:
-{{ followers }}
-</h3>
+    <div class="profile-card">
 
-<h3>
-Following:
-{{ following }}
-</h3>
+        <!-- PROFILE IMAGE -->
 
-</div>
+        <img
 
-{% if current_user.username == user.username %}
+        src="{{ url_for('static', filename='uploads/' + user.profile_pic) }}"
 
-<a href="/edit-profile">
+        class="profile-big-image"
 
-<button>
+        >
 
-Edit Profile
+        <!-- NAME -->
 
-</button>
+        <h1>
+            {{ user.name }}
+        </h1>
 
-</a>
+        <!-- USERNAME -->
 
-<br><br>
+        <h3>
+            @{{ user.username }}
+        </h3>
 
-{% endif %}
+        <!-- BIO -->
 
-{% if current_user.username != user.username %}
+        <p class="profile-bio">
 
-{% if already_following %}
+            {{ user.bio }}
 
-<button>
+        </p>
 
-Following
+        <!-- STATS -->
 
-</button>
+        <div class="profile-stats">
 
-{% else %}
+            <div class="stat-box">
 
-<a href="/follow/{{ user.username }}">
+                <h2>
+                    {{ followers }}
+                </h2>
 
-<button>
+                <p>
+                    Followers
+                </p>
 
-Follow
+            </div>
 
-</button>
+            <div class="stat-box">
 
-</a>
+                <h2>
+                    {{ following }}
+                </h2>
 
-{% endif %}
+                <p>
+                    Following
+                </p>
 
-{% endif %}
+            </div>
 
-<br><br>
+        </div>
 
-<a href="/chat/{{ user.username }}">
+        <!-- BUTTONS -->
 
-<button>
+        <div class="profile-buttons">
 
-Message
+            {% if current_user.username == user.username %}
 
-</button>
+            <a href="/edit-profile">
 
-</a>
+                <button class="profile-btn">
+
+                    Edit Profile
+
+                </button>
+
+            </a>
+
+            {% endif %}
+
+            {% if current_user.username != user.username %}
+
+                {% if already_following %}
+
+                <button class="profile-btn following-btn">
+
+                    Following
+
+                </button>
+
+                {% else %}
+
+                <a href="/follow/{{ user.username }}">
+
+                    <button class="profile-btn">
+
+                        Follow
+
+                    </button>
+
+                </a>
+
+                {% endif %}
+
+                <a href="/chat/{{ user.username }}">
+
+                    <button class="message-btn">
+
+                        Message
+
+                    </button>
+
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </div>
 
 </div>
 

@@ -20,92 +20,31 @@ href="{{ url_for('static', filename='style.css') }}">
 
 <body>
 
-<body>
+<!-- ================= MAIN WRAPPER ================= -->
 
-<div id="content">
-
-<!-- ================= LOADER PAGE ================= -->
-
-<div id="loader-page">
-
-    <div class="glow1"></div>
-
-    <div class="glow2"></div>
-
-    <div class="container">
-
-        <div class="circle"></div>
-
-        <img
-
-        src="{{ url_for('static', filename='applogo.png') }}"
-
-        class="logo"
-
-        >
-
-        <div class="tagline">
-
-            ---Talk More,Connect Better---
-
-        </div>
-
-        <br>
-
-        <div class="loading">
-
-            LOADING
-
-            <span class="dots">
-
-                <span class="dot"></span>
-
-                <span class="dot"></span>
-
-                <span class="dot"></span>
-
-            </span>
-
-        </div>
-
-    </div>
-
-</div>
-
-<div class="mobile-top">
-  <img
-    src="{{ url_for('static', filename='applogo.png') }}"
-    class="logo"
-    height="100"
-    width="50"
->
-<div class="menu-toggle" onclick="toggleMenu()">
-☰
-</div>
-
-</div>
-
-<!-- ================= MAIN CONTENT ================= -->
-
-<div id="main-content">
-
-
+<div class="main-wrapper">
 
 <!-- ================= SIDEBAR ================= -->
 
-<div class="sidebar">
+<div class="sidebar" id="sidebar">
+
+<div class="sidebar-top">
 
 <img
 
-src="{{ url_for('static', filename='logoo.png') }}"
+src="{{ url_for('static', filename='applogo.png') }}"
 
-class="app-logoo"
+class="sidebar-logo"
 
 >
 
-<br>
+<h2>
+Talkix
+</h2>
 
-<div class="menu">
+</div>
+
+<div class="sidebar-menu">
 
 <a href="/profile/{{ current_user.username }}">
 
@@ -117,105 +56,99 @@ class="app-logoo"
 
 </a>
 
+<a href="/account">
 
+<div class="menu-item">
 
-<div
-
-class="menu-item"
-
-onclick="
-window.location.href=
-'/account'
-"
-
->
-
-👤 Account
+⚙ Account
 
 </div>
 
+</a>
 
+<a href="/stories">
 
-<div
-
-class="menu-item"
-
-onclick="
-window.location.href=
-'/media'
-"
-
->
-
-🖼 Media
-
-</div>
-
-
-
-<div
-
-class="menu-item"
-
-onclick="
-window.location.href=
-'/stories'
-"
-
->
+<div class="menu-item">
 
 🔥 Stories
 
 </div>
 
+</a>
+
+<a href="/media">
+
+<div class="menu-item">
+
+🖼 Media
+
 </div>
 
-<br>
+</a>
 
 <a href="/logout">
 
-<button class="logout-btn">
+<div class="menu-item logout">
 
-Logout
+🚪 Logout
 
-</button>
+</div>
 
 </a>
 
 </div>
 
+</div>
 
+<!-- ================= MAIN CONTENT ================= -->
 
-<!-- ================= CHAT SECTION ================= -->
+<div class="main-content">
 
-<div class="chat-section">
+<!-- ================= TOP BAR ================= -->
 
 <div class="top-bar">
 
+<div class="top-left">
+
+<img
+
+src="{{ url_for('static', filename='applogo.png') }}"
+
+class="top-logo"
+
+>
+
 <h2>
-
-Welcome
-{{ current_user.username }}
-
+Talkix
 </h2>
 
 </div>
 
+<div
+class="menu-btn"
+onclick="toggleMenu()">
 
+☰
+
+</div>
+
+</div>
 
 <!-- ================= STORIES ================= -->
 
-<div class="stories-bar">
+<div class="stories-container">
 
 {% for story in stories %}
 
 <a href="/view-story/{{ story.id }}">
 
-<div class="story-circle">
+<div class="story-card">
 
 <img
 
 src="{{ url_for('static', filename='stories/' + story.image) }}"
+
+class="story-image"
 
 >
 
@@ -231,11 +164,9 @@ src="{{ url_for('static', filename='stories/' + story.image) }}"
 
 </div>
 
-
-
 <!-- ================= SEARCH ================= -->
 
-<div class="search-box">
+<div class="search-container">
 
 <input
 
@@ -251,34 +182,43 @@ onkeyup="searchUser()"
 
 </div>
 
-
-
 <!-- ================= USERS ================= -->
 
-<div id="userList">
+<div
+class="users-container"
+id="userList">
 
 {% for user in users %}
 
-<div
+<div class="user-card">
 
-class="chat-box"
+<!-- PROFILE IMAGE -->
 
-onclick="
-window.location.href=
-'/profile/{{ user.username }}'
-"
-
->
+<a
+href="/profile/{{ user.username }}">
 
 <img
 
 src="{{ url_for('static', filename='uploads/' + user.profile_pic) }}"
 
-class="profile"
+class="user-profile"
 
 >
 
-<div class="chat-info">
+</a>
+
+<!-- USER INFO -->
+
+<div
+
+class="user-info"
+
+onclick="
+window.location.href=
+'/chat/{{ user.username }}'
+"
+
+>
 
 <h3>
 {{ user.name }}
@@ -287,21 +227,6 @@ class="profile"
 <p>
 @{{ user.username }}
 </p>
-
-{% if user.online %}
-
-<p style="color:lime;">
-🟢 Online
-</p>
-
-{% else %}
-
-<p style="color:gray;">
-Last seen:
-{{ user.last_seen }}
-</p>
-
-{% endif %}
 
 </div>
 
@@ -315,15 +240,11 @@ Last seen:
 
 </div>
 
-
-
 <!-- ================= JAVASCRIPT ================= -->
 
 <script>
 
-
-
-/* SEARCH USER */
+/* ================= SEARCH ================= */
 
 function searchUser(){
 
@@ -336,18 +257,18 @@ document.getElementById(
 let users =
 
 document.getElementsByClassName(
-"chat-box"
+"user-card"
 );
 
-for(let i = 0; i < users.length; i++){
+for(let i=0;i<users.length;i++){
 
-let username =
+let text =
 
 users[i]
 .innerText
 .toLowerCase();
 
-if(username.includes(input)){
+if(text.includes(input)){
 
 users[i].style.display =
 "flex";
@@ -365,38 +286,17 @@ users[i].style.display =
 
 }
 
-
-
-/* LOADER */
-
-document.getElementById(
-"main-content"
-).style.display = "none";
-
-setTimeout(function(){
-
-document.getElementById(
-"loader-page"
-).style.display = "none";
-
-document.getElementById(
-"main-content"
-).style.display = "flex";
-
-},3000);
-
-
-
-</script>
-<script>
+/* ================= MENU ================= */
 
 function toggleMenu(){
 
-document.querySelector(".sidebar").classList.toggle("active");
+document
+.getElementById("sidebar")
+.classList.toggle("show-sidebar");
 
 }
 
 </script>
-</div>
+
 </body>
 </html>

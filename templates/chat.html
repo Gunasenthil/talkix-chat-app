@@ -3,107 +3,138 @@
 
 <head>
 
-    <title>Talkix Chat</title>
+<title>
+Talkix Chat
+</title>
 
-    <link rel="stylesheet"
-    href="{{ url_for('static', filename='style.css') }}">
+<link rel="stylesheet"
+href="{{ url_for('static', filename='style.css') }}">
 
-    <meta name="viewport"
-    content="width=device-width, initial-scale=1.0">
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
 
 </head>
 
 <body>
 
-<div class="chat-container">
+<div class="chat-page">
 
-    <!-- ================= TOP HEADER ================= -->
+<!-- ================= CHAT BOX CONTAINER ================= -->
 
-    <div class="chat-header">
+<div class="chat-main-container">
 
-        <!-- BACK BUTTON -->
+<!-- ================= HEADER ================= -->
 
-        <a href="/home"
-        class="back-btn">
+<div class="chat-header">
+
+    <!-- LEFT -->
+
+    <div class="chat-header-left">
+
+        <a
+        href="/home"
+        class="chat-back">
+
             ←
+
         </a>
 
-        <!-- PROFILE -->
-
-        <a href="/profile/{{ user.username }}"
-        class="profile-section">
+        <a
+        href="/profile/{{ user.username }}"
+        class="chat-user-link">
 
             <img
+
             src="{{ url_for('static', filename='uploads/' + user.profile_pic) }}"
-            class="chat-profile">
 
-            <div>
+            class="chat-profile"
 
-                <h3>
-                    {{ user.name }}
-                </h3>
-
-                <p>
-                    @{{ user.username }}
-                </p>
-
-            </div>
+            >
 
         </a>
 
-    </div>
+        <div class="chat-user-info">
 
-    <!-- ================= CHAT BOX ================= -->
+            <h3>
+                {{ user.name }}
+            </h3>
 
-    <div id="chat-box"
-    class="messages-container">
+            <p>
+                @{{ user.username }}
+            </p>
 
-        {% for msg in messages %}
-
-            {% if msg.sender == current_user.username %}
-
-                <div class="message sent">
-
-                    {{ msg.message }}
-
-                </div>
-
-            {% else %}
-
-                <div class="message received">
-
-                    {{ msg.message }}
-
-                </div>
-
-            {% endif %}
-
-        {% endfor %}
-
-    </div>
-
-    <!-- ================= INPUT ================= -->
-
-    <div class="chat-input-area">
-
-        <input
-        type="text"
-        id="message-input"
-        placeholder="Type a message...">
-
-        <button
-        class="send-btn"
-        onclick="sendMessage()">
-
-            ➤
-
-        </button>
+        </div>
 
     </div>
 
 </div>
 
-<!-- ================= SOCKET ================= -->
+<!-- ================= MESSAGES ================= -->
+
+<div
+id="chat-box"
+class="messages-container">
+
+{% for msg in messages %}
+
+    {% if msg.sender == current_user.username %}
+
+        <div class="message sent">
+
+            {{ msg.message }}
+
+        </div>
+
+    {% else %}
+
+        <div class="message received">
+
+            {{ msg.message }}
+
+        </div>
+
+    {% endif %}
+
+{% endfor %}
+
+</div>
+
+<!-- ================= INPUT AREA ================= -->
+
+<div class="chat-input-area">
+
+    <input
+
+    type="text"
+
+    id="message-input"
+
+    placeholder="Type a message..."
+
+    autocomplete="off"
+
+    >
+
+    <button
+
+    class="send-btn"
+
+    onclick="sendMessage()"
+
+    >
+
+        ➤
+
+    </button>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- ================= SOCKET.IO ================= -->
 
 <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 
@@ -111,19 +142,31 @@
 
 const socket = io();
 
+/* ================= AUTO SCROLL ================= */
+
+let chatBox =
+
+document.getElementById(
+"chat-box"
+);
+
+chatBox.scrollTop =
+chatBox.scrollHeight;
+
 /* ================= SEND MESSAGE ================= */
 
 function sendMessage(){
 
     let input =
+
     document.getElementById(
-        "message-input"
+    "message-input"
     );
 
     let message =
-    input.value;
+    input.value.trim();
 
-    if(message.trim()==""){
+    if(message === ""){
 
         return;
 
@@ -141,116 +184,101 @@ function sendMessage(){
             receiver:
             "{{ username }}",
 
-            message:message
+            message:
+            message
 
         }
 
     );
 
-    input.value="";
+    input.value = "";
 
 }
+
+/* ================= ENTER KEY ================= */
+
+document.getElementById(
+"message-input"
+).addEventListener(
+
+"keypress",
+
+function(e){
+
+    if(e.key === "Enter"){
+
+        sendMessage();
+
+    }
+
+}
+
+);
 
 /* ================= RECEIVE MESSAGE ================= */
 
 socket.on(
 
-    "receive_message",
+"receive_message",
 
-    function(data){
+function(data){
+
+    if(
+
+        (
+            data.sender === "{{ username }}"
+            &&
+            data.receiver === "{{ current_user.username }}"
+        )
+
+        ||
+
+        (
+            data.sender === "{{ current_user.username }}"
+            &&
+            data.receiver === "{{ username }}"
+        )
+
+    ){
+
+        let div =
+
+        document.createElement(
+        "div"
+        );
 
         if(
 
-            (
-                data.sender ==
-                "{{ username }}"
-            )
-
-            ||
-
-            (
-                data.sender ==
-                "{{ current_user.username }}"
-            )
+            data.sender ===
+            "{{ current_user.username }}"
 
         ){
 
-            let chatBox =
-            document.getElementById(
-                "chat-box"
-            );
-
-            let div =
-            document.createElement(
-                "div"
-            );
-
-            if(
-
-                data.sender ==
-                "{{ current_user.username }}"
-
-            ){
-
-                div.className =
-                "message sent";
-
-            }
-
-            else{
-
-                div.className =
-                "message received";
-
-            }
-
-            div.innerHTML =
-            data.message;
-
-            chatBox.appendChild(div);
-
-            chatBox.scrollTop =
-            chatBox.scrollHeight;
+            div.className =
+            "message sent";
 
         }
 
-    }
+        else{
 
-);
-
-/* ================= ENTER KEY ================= */
-
-document.getElementById(
-    "message-input"
-).addEventListener(
-
-    "keypress",
-
-    function(e){
-
-        if(e.key === "Enter"){
-
-            sendMessage();
+            div.className =
+            "message received";
 
         }
 
+        div.innerHTML =
+        data.message;
+
+        chatBox.appendChild(div);
+
+        chatBox.scrollTop =
+        chatBox.scrollHeight;
+
     }
 
+}
+
 );
-
-/* ================= AUTO SCROLL ================= */
-
-window.onload = function(){
-
-    let chatBox =
-    document.getElementById(
-        "chat-box"
-    );
-
-    chatBox.scrollTop =
-    chatBox.scrollHeight;
-
-};
 
 </script>
 

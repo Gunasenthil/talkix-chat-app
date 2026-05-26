@@ -2,9 +2,11 @@
 <html>
 
 <head>
+
 <meta
 name="viewport"
 content="width=device-width, initial-scale=1.0">
+
 <title>
 Media
 </title>
@@ -16,96 +18,137 @@ href="{{ url_for('static', filename='style.css') }}">
 
 <body>
 
-<div class="profile-page">
+<div class="media-page">
 
-<h1>
-Media
-</h1>
+    <!-- ================= TOP BAR ================= -->
 
-<h2>
-Images
-</h2>
+    <div class="media-topbar">
 
-{% for img in images %}
+        <a
+        href="/home"
+        class="media-back">
 
-<img
+            ←
 
-src="{{ url_for('static', filename='chat_media/' + img.image) }}"
+        </a>
 
-width="250"
+        <h2>
+            Media
+        </h2>
 
-style="margin:10px;border-radius:10px;"
+    </div>
 
->
+    <!-- ================= IMAGE SECTION ================= -->
 
-{% endfor %}
+    <div class="media-section">
 
-<h2>
-Voice Messages
-</h2>
+        <h1>
+            Images
+        </h1>
 
-{% for v in voices %}
+        <div class="media-grid">
 
-<audio controls>
+            {% for img in images %}
 
-<source
+            <img
 
-src="{{ url_for('static', filename='voice_notes/' + v.voice) }}"
+            src="{{ url_for('static', filename='chat_media/' + img.image) }}"
 
->
+            class="media-image"
 
-</audio>
+            >
 
-<br><br>
+            {% endfor %}
 
-{% endfor %}
+        </div>
 
-<h2>
-Documents
-</h2>
+    </div>
 
-{% for d in documents %}
+    <!-- ================= VOICE SECTION ================= -->
 
-<a
+    <div class="media-section">
 
-href="{{ url_for('static', filename='documents/' + d.document) }}"
+        <h1>
+            Voice Messages
+        </h1>
 
-target="_blank"
+        {% for v in voices %}
 
->
+        <div class="voice-card">
 
-📄 {{ d.document }}
+            <audio controls>
 
-</a>
+                <source
 
-<br><br>
+                src="{{ url_for('static', filename='voice_notes/' + v.voice) }}"
 
-{% endfor %}
+                >
 
-<h2>
-Links
-</h2>
+            </audio>
 
-{% for l in links %}
+        </div>
 
-<a
+        {% endfor %}
 
-href="{{ l.link }}"
+    </div>
 
-target="_blank"
+    <!-- ================= DOCUMENT SECTION ================= -->
 
->
+    <div class="media-section">
 
-🔗 {{ l.link }}
+        <h1>
+            Documents
+        </h1>
 
-</a>
+        {% for d in documents %}
 
-<br><br>
+        <a
 
-{% endfor %}
+        href="{{ url_for('static', filename='documents/' + d.document) }}"
+
+        target="_blank"
+
+        class="document-card"
+
+        >
+
+            📄 {{ d.document }}
+
+        </a>
+
+        {% endfor %}
+
+    </div>
+
+    <!-- ================= LINK SECTION ================= -->
+
+    <div class="media-section">
+
+        <h1>
+            Links
+        </h1>
+
+        {% for l in links %}
+
+        <a
+
+        href="{{ l.link }}"
+
+        target="_blank"
+
+        class="link-card"
+
+        >
+
+            🔗 {{ l.link }}
+
+        </a>
+
+        {% endfor %}
+
+    </div>
 
 </div>
 
 </body>
 </html>
-

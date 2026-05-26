@@ -2,9 +2,11 @@
 <html>
 
 <head>
+
 <meta
 name="viewport"
 content="width=device-width, initial-scale=1.0">
+
 <title>
 Stories
 </title>
@@ -16,63 +18,111 @@ href="{{ url_for('static', filename='style.css') }}">
 
 <body>
 
-<div class="profile-page">
+<div class="stories-page">
 
-<h1>
-Stories
-</h1>
+    <!-- ================= TOP BAR ================= -->
 
-<form
+    <div class="stories-topbar">
 
-method="POST"
+        <a
+        href="/home"
+        class="stories-back">
 
-enctype="multipart/form-data"
+            ←
 
->
+        </a>
 
-<input
+        <h2>
+            Stories
+        </h2>
 
-type="file"
+    </div>
 
-name="image"
+    <!-- ================= UPLOAD CARD ================= -->
 
-required
+    <div class="upload-story-card">
 
->
+        <h1>
+            Upload Story
+        </h1>
 
-<button type="submit">
+        <form
 
-Upload Story
+        method="POST"
 
-</button>
+        enctype="multipart/form-data"
 
-</form>
+        class="story-upload-form"
 
-<br><br>
+        >
 
-{% for story in stories %}
+            <input
 
-<div class="story-card">
+            type="file"
 
-<h3>
-{{ story.username }}
-</h3>
+            name="image"
 
-<a href="/view-story/{{ story.id }}">
+            required
 
-<img
+            class="story-file-input"
 
-src="{{ url_for('static', filename='stories/' + story.image) }}"
+            >
 
-class="story-image"
+            <button
+            type="submit"
+            class="upload-story-btn">
 
->
+                Upload Story
 
-</a>
+            </button>
 
-</div>
+        </form>
 
-{% endfor %}
+    </div>
+
+    <!-- ================= STORIES GRID ================= -->
+
+    <div class="stories-grid">
+
+        {% for story in stories %}
+
+        <a
+
+        href="/view-story/{{ story.id }}"
+
+        class="story-link"
+
+        >
+
+            <div class="story-card">
+
+                <!-- STORY IMAGE -->
+
+                <img
+
+                src="{{ url_for('static', filename='stories/' + story.image) }}"
+
+                class="story-image"
+
+                >
+
+                <!-- USERNAME -->
+
+                <div class="story-overlay">
+
+                    <p>
+                        {{ story.username }}
+                    </p>
+
+                </div>
+
+            </div>
+
+        </a>
+
+        {% endfor %}
+
+    </div>
 
 </div>
 

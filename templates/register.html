@@ -1,213 +1,244 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
+
+<meta charset="UTF-8">
+
 <meta
 name="viewport"
 content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
+
+<title>
+Register
+</title>
+
+<link rel="stylesheet"
+href="{{ url_for('static', filename='style.css') }}">
+
 </head>
 
-<body style="
-background:#111827;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-font-family:Arial;
-">
+<body>
 
-<form
-method="POST"
-enctype="multipart/form-data"
+<!-- ================= REGISTER PAGE ================= -->
 
-style="
-background:#1f2937;
-padding:40px;
-border-radius:20px;
-display:flex;
-flex-direction:column;
-gap:15px;
-width:350px;
-"
->
+<div class="register-page">
 
-<h1 style="color:white;">
-Create Account
-</h1>
+    <!-- GLOW EFFECT -->
 
+    <div class="register-glow1"></div>
 
-<!-- EMAIL -->
-<input
-type="email"
-name="email"
-placeholder="Enter Gmail"
-required
+    <div class="register-glow2"></div>
 
-style="
-padding:15px;
-border:none;
-border-radius:10px;
-"
->
+    <!-- REGISTER CARD -->
 
+    <form
 
-<!-- SEND OTP -->
-<button
-type="button"
-onclick="sendOTP()"
+    method="POST"
 
-style="
-padding:12px;
-border:none;
-border-radius:10px;
-background:#2563eb;
-color:white;
-cursor:pointer;
-"
->
-Send OTP
-</button>
+    enctype="multipart/form-data"
 
+    class="register-card"
 
-<!-- OTP -->
-<input
-type="text"
-name="otp"
-placeholder="Enter OTP"
-required
+    >
 
-style="
-padding:15px;
-border:none;
-border-radius:10px;
-"
->
+        <!-- LOGO -->
 
+        <img
 
-<!-- USERNAME -->
-<input
-type="text"
-name="username"
-placeholder="Username"
-required
+        src="{{ url_for('static', filename='applogo.png') }}"
 
-style="
-padding:15px;
-border:none;
-border-radius:10px;
-"
->
+        class="register-logo"
 
+        >
 
-<!-- DOB -->
-<input
-type="date"
-name="dob"
-required
+        <!-- TITLE -->
 
-style="
-padding:15px;
-border:none;
-border-radius:10px;
-"
->
+        <h1>
+            Create Account
+        </h1>
 
+        <p class="register-subtitle">
 
-<!-- GENDER -->
-<select
-name="gender"
-required
+            Join Talkix and start chatting
 
-style="
-padding:15px;
-border:none;
-border-radius:10px;
-"
->
+        </p>
 
-<option value="">
-Select Gender
-</option>
+        <!-- EMAIL -->
 
-<option>
-Male
-</option>
+        <input
 
-<option>
-Female
-</option>
+        type="email"
 
-<option>
-Other
-</option>
+        name="email"
 
-</select>
+        placeholder="Enter Gmail"
 
+        required
 
-<!-- PROFILE PHOTO -->
-<input
-type="file"
-name="profile_pic"
-required
+        >
 
-style="
-padding:10px;
-background:white;
-border-radius:10px;
-"
->
+        <!-- SEND OTP -->
 
+        <button
 
-<!-- PASSWORD -->
-<input
-type="password"
-name="password"
-placeholder="Password"
-required
+        type="button"
 
-style="
-padding:15px;
-border:none;
-border-radius:10px;
-"
->
+        onclick="sendOTP()"
 
+        class="otp-btn"
 
-<!-- CREATE ACCOUNT -->
-<button
-type="submit"
+        >
 
-style="
-padding:15px;
-border:none;
-border-radius:10px;
-background:#10b981;
-color:white;
-cursor:pointer;
-"
->
-Create Account
-</button>
+            Send OTP
 
+        </button>
 
-<!-- LOGIN -->
-<a href="/login" style="color:white;">
-Already have account?
-</a>
+        <!-- OTP -->
 
-</form>
+        <input
 
+        type="text"
+
+        name="otp"
+
+        placeholder="Enter OTP"
+
+        required
+
+        >
+
+        <!-- USERNAME -->
+
+        <input
+
+        type="text"
+
+        name="username"
+
+        placeholder="Username"
+
+        required
+
+        >
+
+        <!-- DATE -->
+
+        <input
+
+        type="date"
+
+        name="dob"
+
+        required
+
+        >
+
+        <!-- GENDER -->
+
+        <select
+
+        name="gender"
+
+        required
+
+        >
+
+            <option value="">
+                Select Gender
+            </option>
+
+            <option>
+                Male
+            </option>
+
+            <option>
+                Female
+            </option>
+
+            <option>
+                Other
+            </option>
+
+        </select>
+
+        <!-- PROFILE PHOTO -->
+
+        <div class="upload-box">
+
+            <label>
+
+                Upload Profile Photo
+
+            </label>
+
+            <input
+
+            type="file"
+
+            name="profile_pic"
+
+            required
+
+            >
+
+        </div>
+
+        <!-- PASSWORD -->
+
+        <input
+
+        type="password"
+
+        name="password"
+
+        placeholder="Password"
+
+        required
+
+        >
+
+        <!-- SUBMIT -->
+
+        <button
+        type="submit"
+        class="register-btn">
+
+            Create Account
+
+        </button>
+
+        <!-- LOGIN -->
+
+        <a
+        href="/login"
+        class="login-link">
+
+            Already have account?
+
+        </a>
+
+    </form>
+
+</div>
+
+<!-- ================= JAVASCRIPT ================= -->
 
 <script>
 
 async function sendOTP(){
 
-    let response = await fetch("/send-otp");
+    let response =
 
-    let otp = await response.text();
+    await fetch("/send-otp");
 
-    alert("Your OTP is: " + otp);
+    let otp =
+
+    await response.text();
+
+    alert(
+    "Your OTP is: " + otp
+    );
 
 }
 

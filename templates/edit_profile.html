@@ -2,79 +2,151 @@
 <html>
 
 <head>
+
 <meta
 name="viewport"
 content="width=device-width, initial-scale=1.0">
-    <title>
-        Edit Profile
-    </title>
 
-    <link rel="stylesheet"
-    href="{{ url_for('static', filename='style.css') }}">
+<title>
+Edit Profile
+</title>
+
+<link rel="stylesheet"
+href="{{ url_for('static', filename='style.css') }}">
 
 </head>
 
 <body>
 
-<div class="profile-page">
+<div class="edit-page">
 
-    <h1>
-        Edit Profile
-    </h1>
+    <!-- ================= TOP BAR ================= -->
 
-    <form
+    <div class="edit-topbar">
 
-    method="POST"
+        <a
+        href="/profile/{{ current_user.username }}"
+        class="edit-back">
 
-    enctype="multipart/form-data"
+            ←
 
-    >
+        </a>
 
-        <input
+        <h2>
+            Edit Profile
+        </h2>
 
-        type="text"
+    </div>
 
-        name="name"
+    <!-- ================= EDIT CARD ================= -->
 
-        placeholder="Name"
+    <div class="edit-card">
 
-        value="{{ current_user.name }}"
+        <!-- PROFILE PREVIEW -->
 
-        required
+        <div class="edit-profile-preview">
+
+            <img
+
+            src="{{ url_for('static', filename='uploads/' + current_user.profile_pic) }}"
+
+            class="edit-profile-image"
+
+            >
+
+            <h2>
+                {{ current_user.name }}
+            </h2>
+
+            <p>
+                @{{ current_user.username }}
+            </p>
+
+        </div>
+
+        <!-- FORM -->
+
+        <form
+
+        method="POST"
+
+        enctype="multipart/form-data"
+
+        class="edit-form"
 
         >
 
-        <br><br>
+            <!-- NAME -->
 
-        <textarea
+            <label>
 
-        name="bio"
+                Full Name
 
-        placeholder="Bio"
+            </label>
 
-        rows="4"
+            <input
 
-        >{{ current_user.bio }}</textarea>
+            type="text"
 
-        <br><br>
+            name="name"
 
-        <input
+            placeholder="Enter name"
 
-        type="file"
+            value="{{ current_user.name }}"
 
-        name="profile_pic"
+            required
 
-        >
+            >
 
-        <br><br>
+            <!-- BIO -->
 
-        <button type="submit">
+            <label>
 
-            Save Changes
+                Bio
 
-        </button>
+            </label>
 
-    </form>
+            <textarea
+
+            name="bio"
+
+            placeholder="Write your bio"
+
+            rows="5"
+
+            >{{ current_user.bio }}</textarea>
+
+            <!-- PHOTO -->
+
+            <label>
+
+                Change Profile Photo
+
+            </label>
+
+            <input
+
+            type="file"
+
+            name="profile_pic"
+
+            class="file-input"
+
+            >
+
+            <!-- SAVE -->
+
+            <button
+            type="submit"
+            class="save-btn">
+
+                Save Changes
+
+            </button>
+
+        </form>
+
+    </div>
 
 </div>
 
