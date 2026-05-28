@@ -1007,35 +1007,104 @@ body{
 
 }
 
-/* ================= CHAT PAGE ================= */
+/* ================= PREMIUM GLOBAL UPGRADE ================= */
 
-.chat-page{
+*{
 
-    width:100%;
+    margin:0;
 
-    height:100vh;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    padding:15px;
+    padding:0;
 
     box-sizing:border-box;
 
+    scroll-behavior:smooth;
+
 }
 
-/* ================= CHAT MAIN ================= */
+/* ================= BODY ================= */
 
-.chat-main-container{
+body{
 
-    width:100%;
+    background:
+    linear-gradient(
+    135deg,
+    #020617,
+    #0f172a,
+    #111827,
+    #1e1b4b
+    );
 
-    max-width:1000px;
+    background-size:400% 400%;
 
-    height:95vh;
+    animation:bgMove 15s ease infinite;
+
+    font-family:
+    "Segoe UI",
+    Arial,
+    sans-serif;
+
+    color:white;
+
+    overflow-x:hidden;
+
+}
+
+/* ================= ANIMATED BACKGROUND ================= */
+
+@keyframes bgMove{
+
+    0%{
+
+        background-position:0% 50%;
+
+    }
+
+    50%{
+
+        background-position:100% 50%;
+
+    }
+
+    100%{
+
+        background-position:0% 50%;
+
+    }
+
+}
+
+/* ================= SCROLLBAR ================= */
+
+::-webkit-scrollbar{
+
+    width:6px;
+
+    height:6px;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+    background:
+    linear-gradient(
+    180deg,
+    #3b82f6,
+    #7c3aed
+    );
+
+    border-radius:20px;
+
+}
+
+::-webkit-scrollbar-track{
+
+    background:transparent;
+
+}
+
+/* ================= GLASS EFFECT ================= */
+
+.glass-card{
 
     background:
     rgba(255,255,255,0.06);
@@ -1043,259 +1112,117 @@ body{
     border:
     1px solid rgba(255,255,255,0.08);
 
-    backdrop-filter:blur(20px);
-
-    border-radius:30px;
-
-    overflow:hidden;
-
-    position:relative;
-
-    display:flex;
-
-    flex-direction:column;
-
-}
-
-/* ================= HEADER ================= */
-
-.chat-header{
-
-    width:100%;
-
-    height:80px;
-
-    background:
-    rgba(17,24,39,0.8);
-
-    backdrop-filter:blur(20px);
-
-    border-bottom:
-    1px solid rgba(255,255,255,0.08);
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:space-between;
-
-    padding:0 20px;
-
-    box-sizing:border-box;
-
-    flex-shrink:0;
-
-}
-
-/* ================= HEADER LEFT ================= */
-
-.chat-header-left{
-
-    display:flex;
-
-    align-items:center;
-
-}
-
-/* ================= BACK BUTTON ================= */
-
-.chat-back{
-
-    color:white;
-
-    text-decoration:none;
-
-    font-size:30px;
-
-    margin-right:18px;
-
-}
-
-/* ================= PROFILE ================= */
-
-.chat-user-link{
-
-    text-decoration:none;
-
-}
-
-.chat-profile{
-
-    width:52px;
-
-    height:52px;
-
-    border-radius:50%;
-
-    object-fit:cover;
-
-    border:3px solid #3b82f6;
-
-    margin-right:14px;
-
-}
-
-/* ================= USER INFO ================= */
-
-.chat-user-info h3{
-
-    margin:0;
-
-    font-size:19px;
-
-    color:white;
-
-}
-
-.chat-user-info p{
-
-    margin-top:5px;
-
-    color:#cbd5e1;
-
-    font-size:14px;
-
-}
-
-/* ================= MESSAGES ================= */
-
-.messages-container{
-
-    flex:1;
-
-    overflow-y:auto;
-
-    padding:25px;
-
-    display:flex;
-
-    flex-direction:column;
-
-    gap:14px;
-
-}
-
-/* ================= SCROLLBAR ================= */
-
-.messages-container::-webkit-scrollbar{
-
-    width:5px;
-
-}
-
-.messages-container::-webkit-scrollbar-thumb{
-
-    background:#334155;
-
-    border-radius:10px;
-
-}
-
-/* ================= MESSAGE ================= */
-
-.message{
-
-    max-width:75%;
-
-    padding:14px 18px;
-
-    border-radius:22px;
-
-    font-size:15px;
-
-    line-height:1.5;
-
-    word-wrap:break-word;
-
-    animation:fadeIn 0.2s ease;
-
-}
-
-/* ================= SENT ================= */
-
-.sent{
-
-    align-self:flex-end;
-
-    background:
-    linear-gradient(
-    135deg,
-    #2563eb,
-    #7c3aed
-    );
-
-    color:white;
-
-    border-bottom-right-radius:8px;
+    backdrop-filter:blur(18px);
 
     box-shadow:
-    0 5px 18px rgba(37,99,235,0.4);
+    0 10px 35px rgba(0,0,0,0.25);
 
 }
 
-/* ================= RECEIVED ================= */
+/* ================= COMMON BUTTON ================= */
 
-.received{
+button{
 
-    align-self:flex-start;
-
-    background:
-    rgba(255,255,255,0.08);
-
-    color:white;
-
-    border-bottom-left-radius:8px;
+    transition:0.3s ease;
 
 }
 
-/* ================= INPUT AREA ================= */
+button:hover{
 
-.chat-input-area{
+    transform:translateY(-2px) scale(1.02);
 
-    width:100%;
-
-    min-height:85px;
-
-    background:
-    rgba(17,24,39,0.82);
-
-    border-top:
-    1px solid rgba(255,255,255,0.08);
-
-    display:flex;
-
-    align-items:center;
-
-    padding:15px;
-
-    box-sizing:border-box;
-
-    gap:12px;
+    opacity:0.95;
 
 }
 
-/* ================= INPUT ================= */
+/* ================= INPUTS ================= */
 
-.chat-input-area input{
+input,
+textarea,
+select{
 
-    flex:1;
+    transition:0.3s;
 
-    height:55px;
+}
 
-    border:none;
+input:focus,
+textarea:focus,
+select:focus{
 
     outline:none;
 
-    border-radius:35px;
+    box-shadow:
+    0 0 0 3px rgba(59,130,246,0.25);
 
-    padding:0 22px;
+}
 
-    background:
-    rgba(255,255,255,0.08);
+/* ================= PREMIUM CARDS ================= */
 
-    color:white;
+.user-card,
+.profile-card,
+.account-card,
+.edit-card,
+.chat-main-container,
+.story-card,
+.upload-story-card,
+.media-section{
 
-    font-size:15px;
+    box-shadow:
+    0 10px 35px rgba(0,0,0,0.25);
+
+}
+
+/* ================= HOVER EFFECT ================= */
+
+.user-card:hover,
+.story-card:hover,
+.media-image:hover{
+
+    transform:
+    translateY(-5px)
+    scale(1.01);
+
+}
+
+/* ================= STORY IMAGE ================= */
+
+.story-image{
+
+    transition:0.3s;
+
+}
+
+.story-image:hover{
+
+    transform:scale(1.06);
+
+}
+
+/* ================= CHAT MESSAGE ================= */
+
+.message{
+
+    animation:messagePop 0.2s ease;
+
+}
+
+@keyframes messagePop{
+
+    from{
+
+        opacity:0;
+
+        transform:scale(0.9);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:scale(1);
+
+    }
 
 }
 
@@ -1303,38 +1230,64 @@ body{
 
 .send-btn{
 
-    width:55px;
-
-    height:55px;
-
-    border:none;
-
-    border-radius:50%;
-
-    background:
-    linear-gradient(
-    135deg,
-    #2563eb,
-    #7c3aed
-    );
-
-    color:white;
-
-    font-size:23px;
-
-    cursor:pointer;
-
-    transition:0.3s;
+    box-shadow:
+    0 5px 18px rgba(59,130,246,0.35);
 
 }
 
-.send-btn:hover{
+/* ================= PROFILE IMAGE ================= */
 
-    transform:scale(1.06);
+.profile-big-image,
+.account-profile,
+.edit-profile-image{
+
+    box-shadow:
+    0 8px 25px rgba(59,130,246,0.35);
 
 }
 
-/* ================= ANIMATION ================= */
+/* ================= LINKS ================= */
+
+a{
+
+    text-decoration:none;
+
+}
+
+/* ================= MOBILE OPTIMIZATION ================= */
+
+@media(max-width:768px){
+
+    body{
+
+        overflow-x:hidden;
+
+    }
+
+    .main-content{
+
+        padding:15px;
+
+    }
+
+    .profile-card,
+    .account-card,
+    .edit-card,
+    .chat-main-container{
+
+        border-radius:25px;
+
+    }
+
+}
+
+/* ================= FADE ANIMATION ================= */
+
+.fade-in{
+
+    animation:fadeIn 0.5s ease;
+
+}
 
 @keyframes fadeIn{
 
@@ -1342,7 +1295,7 @@ body{
 
         opacity:0;
 
-        transform:translateY(10px);
+        transform:translateY(15px);
 
     }
 
@@ -1351,70 +1304,6 @@ body{
         opacity:1;
 
         transform:translateY(0);
-
-    }
-
-}
-
-/* ================= MOBILE ================= */
-
-@media(max-width:768px){
-
-    .chat-page{
-
-        padding:0;
-
-    }
-
-    .chat-main-container{
-
-        width:100%;
-
-        height:100vh;
-
-        border-radius:0;
-
-    }
-
-    .chat-header{
-
-        height:75px;
-
-        padding:0 15px;
-
-    }
-
-    .messages-container{
-
-        padding:18px;
-
-    }
-
-    .message{
-
-        max-width:85%;
-
-        font-size:14px;
-
-    }
-
-    .chat-input-area{
-
-        padding:12px;
-
-    }
-
-    .chat-input-area input{
-
-        height:50px;
-
-    }
-
-    .send-btn{
-
-        width:50px;
-
-        height:50px;
 
     }
 

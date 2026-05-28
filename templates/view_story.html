@@ -2,9 +2,11 @@
 <html>
 
 <head>
+
 <meta
 name="viewport"
 content="width=device-width, initial-scale=1.0">
+
 <title>
 View Story
 </title>
@@ -16,52 +18,105 @@ href="{{ url_for('static', filename='style.css') }}">
 
 <body>
 
-<div class="profile-page">
+<!-- ================= STORY VIEW PAGE ================= -->
 
-<h2>
-{{ story.username }}
-</h2>
+<div class="story-view-page">
 
-<img
+    <!-- BLUR BACKGROUND -->
 
-src="{{ url_for('static', filename='stories/' + story.image) }}"
+    <div
+    class="story-bg"
 
-class="story-image"
+    style="
+    background-image:url('{{ url_for('static', filename='stories/' + story.image) }}');
+    "
 
->
-{% if current_user.username == story.username %}
+    ></div>
 
-<a href="/delete-story/{{ story.id }}">
+    <!-- TOP BAR -->
 
-<br><br>
-<button>
+    <div class="story-topbar">
 
-🗑 Delete Story
+        <a
+        href="/stories"
+        class="story-back-btn">
 
-</button>
+            ←
 
-</a>
+        </a>
 
-{% endif %}
+        <div class="story-user-info">
 
-<br><br>
+            <h3>
+                {{ story.username }}
+            </h3>
 
+            <p>
+                Story
+            </p>
 
-{% if current_user.username == story.username %}
+        </div>
 
-<h3>
-👀 Viewers
-</h3>
+    </div>
 
-{% for v in viewers %}
+    <!-- STORY CONTENT -->
 
-<p>
-{{ v.viewer }}
-</p>
+    <div class="story-center">
 
-{% endfor %}
+        <img
 
-{% endif %}
+        src="{{ url_for('static', filename='stories/' + story.image) }}"
+
+        class="full-story-image"
+
+        >
+
+    </div>
+
+    <!-- DELETE BUTTON -->
+
+    {% if current_user.username == story.username %}
+
+    <div class="story-actions">
+
+        <a href="/delete-story/{{ story.id }}">
+
+            <button class="delete-story-btn">
+
+                🗑 Delete Story
+
+            </button>
+
+        </a>
+
+    </div>
+
+    {% endif %}
+
+    <!-- VIEWERS -->
+
+    {% if current_user.username == story.username %}
+
+    <div class="viewers-box">
+
+        <h2>
+            👀 Viewers
+        </h2>
+
+        {% for v in viewers %}
+
+        <div class="viewer-item">
+
+            {{ v.viewer }}
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% endif %}
+
 </div>
 
 </body>

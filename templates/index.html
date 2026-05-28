@@ -20,223 +20,261 @@ href="{{ url_for('static', filename='style.css') }}">
 
 <body>
 
-<!-- ================= MAIN WRAPPER ================= -->
+<div class="main-wrapper fade-in">
 
-<div class="main-wrapper">
+    <!-- ================= SIDEBAR ================= -->
 
-<!-- ================= SIDEBAR ================= -->
+    <div class="sidebar" id="sidebar">
 
-<div class="sidebar" id="sidebar">
+        <div>
 
-<div class="sidebar-top">
+            <!-- LOGO -->
 
-<img
+            <div class="sidebar-top">
 
-src="{{ url_for('static', filename='applogo.png') }}"
+                <img
 
-class="sidebar-logo"
+                src="{{ url_for('static', filename='applogo.png') }}"
 
->
+                class="sidebar-logo"
 
-<h2>
-Talkix
-</h2>
+                >
 
-</div>
+                <div>
 
-<div class="sidebar-menu">
+                    <h2>
+                        Talkix
+                    </h2>
 
-<a href="/profile/{{ current_user.username }}">
+                    <p style="color:#94a3b8;font-size:13px;">
+                        Connect Better
+                    </p>
 
-<div class="menu-item">
+                </div>
 
-👤 Profile
+            </div>
 
-</div>
+            <!-- MENU -->
 
-</a>
+            <div class="sidebar-menu">
 
-<a href="/account">
+                <a href="/profile/{{ current_user.username }}">
 
-<div class="menu-item">
+                    <div class="menu-item">
 
-⚙ Account
+                        👤 Profile
 
-</div>
+                    </div>
 
-</a>
+                </a>
 
-<a href="/stories">
+                <a href="/account">
 
-<div class="menu-item">
+                    <div class="menu-item">
 
-🔥 Stories
+                        ⚙ Account
 
-</div>
+                    </div>
 
-</a>
+                </a>
 
-<a href="/media">
+                <a href="/stories">
 
-<div class="menu-item">
+                    <div class="menu-item">
 
-🖼 Media
+                        🔥 Stories
 
-</div>
+                    </div>
 
-</a>
+                </a>
 
-<a href="/logout">
+                <a href="/media">
 
-<div class="menu-item logout">
+                    <div class="menu-item">
 
-🚪 Logout
+                        🖼 Media
 
-</div>
+                    </div>
 
-</a>
+                </a>
 
-</div>
+            </div>
 
-</div>
+        </div>
 
-<!-- ================= MAIN CONTENT ================= -->
+        <!-- LOGOUT -->
 
-<div class="main-content">
+        <a href="/logout">
 
-<!-- ================= TOP BAR ================= -->
+            <div class="menu-item logout">
 
-<div class="top-bar">
+                🚪 Logout
 
-<div class="top-left">
+            </div>
 
-<img
+        </a>
 
-src="{{ url_for('static', filename='applogo.png') }}"
+    </div>
 
-class="top-logo"
+    <!-- ================= MAIN CONTENT ================= -->
 
->
+    <div class="main-content">
 
-<h2>
-Talkix
-</h2>
+        <!-- TOPBAR -->
 
-</div>
+        <div class="top-bar">
 
-<div
-class="menu-btn"
-onclick="toggleMenu()">
+            <div class="top-left">
 
-☰
+                <div
+                class="menu-btn"
+                onclick="toggleSidebar()">
 
-</div>
+                    ☰
 
-</div>
+                </div>
 
-<!-- ================= STORIES ================= -->
+                <img
 
-<div class="stories-container">
+                src="{{ url_for('static', filename='applogo.png') }}"
 
-{% for story in stories %}
+                class="top-logo"
 
-<a href="/view-story/{{ story.id }}">
+                >
 
-<div class="story-card">
+                <div>
 
-<img
+                    <h2>
+                        Welcome,
+                        {{ current_user.name }}
+                    </h2>
 
-src="{{ url_for('static', filename='stories/' + story.image) }}"
+                    <p style="color:#94a3b8;font-size:14px;">
 
-class="story-image"
+                        @{{ current_user.username }}
 
->
+                    </p>
 
-<p>
-{{ story.username }}
-</p>
+                </div>
 
-</div>
+            </div>
 
-</a>
+        </div>
 
-{% endfor %}
+        <!-- STORIES -->
 
-</div>
+        <div class="stories-container">
 
-<!-- ================= SEARCH ================= -->
+            {% for story in stories %}
 
-<div class="search-container">
+            <a
+            href="/view-story/{{ story.id }}"
+            class="story-card">
 
-<input
+                <img
 
-type="text"
+                src="{{ url_for('static', filename='stories/' + story.image) }}"
 
-id="searchInput"
+                class="story-image"
 
-placeholder="Search users..."
+                >
 
-onkeyup="searchUser()"
+                <p>
+                    {{ story.username }}
+                </p>
 
->
+            </a>
 
-</div>
+            {% endfor %}
 
-<!-- ================= USERS ================= -->
+        </div>
 
-<div
-class="users-container"
-id="userList">
+        <!-- SEARCH -->
 
-{% for user in users %}
+        <div class="search-container">
 
-<div class="user-card">
+            <input
 
-<!-- PROFILE IMAGE -->
+            type="text"
 
-<a
-href="/profile/{{ user.username }}">
+            id="searchInput"
 
-<img
+            placeholder="Search users..."
 
-src="{{ url_for('static', filename='uploads/' + user.profile_pic) }}"
+            onkeyup="searchUsers()"
 
-class="user-profile"
+            >
 
->
+        </div>
 
-</a>
+        <!-- USERS -->
 
-<!-- USER INFO -->
+        <div
+        class="users-container"
+        id="usersContainer">
 
-<div
+            {% for user in users %}
 
-class="user-info"
+            <div class="user-card">
 
-onclick="
-window.location.href=
-'/chat/{{ user.username }}'
-"
+                <!-- PROFILE IMAGE -->
 
->
+                <a href="/profile/{{ user.username }}">
 
-<h3>
-{{ user.name }}
-</h3>
+                    <img
 
-<p>
-@{{ user.username }}
-</p>
+                    src="{{ url_for('static', filename='uploads/' + user.profile_pic) }}"
 
-</div>
+                    class="user-profile"
 
-</div>
+                    >
 
-{% endfor %}
+                </a>
 
-</div>
+                <!-- USER INFO -->
 
-</div>
+                <div
+                class="user-info"
+
+                onclick="
+                window.location.href=
+                '/chat/{{ user.username }}'
+                "
+
+                >
+
+                    <h3>
+                        {{ user.name }}
+                    </h3>
+
+                    <p>
+                        @{{ user.username }}
+                    </p>
+
+                    {% if user.online %}
+
+                    <p style="color:#22c55e;">
+                        ● Online
+                    </p>
+
+                    {% else %}
+
+                    <p style="color:#94a3b8;">
+                        Last seen:
+                        {{ user.last_seen }}
+                    </p>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
 
 </div>
 
@@ -244,55 +282,57 @@ window.location.href=
 
 <script>
 
-/* ================= SEARCH ================= */
+/* SEARCH */
 
-function searchUser(){
+function searchUsers(){
 
-let input =
+    let input =
 
-document.getElementById(
-"searchInput"
-).value.toLowerCase();
+    document.getElementById(
+    "searchInput"
+    ).value.toLowerCase();
 
-let users =
+    let cards =
 
-document.getElementsByClassName(
-"user-card"
-);
+    document.getElementsByClassName(
+    "user-card"
+    );
 
-for(let i=0;i<users.length;i++){
+    for(let i = 0; i < cards.length; i++){
 
-let text =
+        let text =
 
-users[i]
-.innerText
-.toLowerCase();
+        cards[i]
+        .innerText
+        .toLowerCase();
 
-if(text.includes(input)){
+        if(text.includes(input)){
 
-users[i].style.display =
-"flex";
+            cards[i].style.display =
+            "flex";
+
+        }
+
+        else{
+
+            cards[i].style.display =
+            "none";
+
+        }
+
+    }
 
 }
 
-else{
+/* MOBILE SIDEBAR */
 
-users[i].style.display =
-"none";
+function toggleSidebar(){
 
-}
-
-}
-
-}
-
-/* ================= MENU ================= */
-
-function toggleMenu(){
-
-document
-.getElementById("sidebar")
-.classList.toggle("show-sidebar");
+    document.getElementById(
+    "sidebar"
+    ).classList.toggle(
+    "show-sidebar"
+    );
 
 }
 
