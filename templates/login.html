@@ -10,7 +10,7 @@ name="viewport"
 content="width=device-width, initial-scale=1.0">
 
 <title>
-Login
+Talkix
 </title>
 
 <link rel="stylesheet"
@@ -20,94 +20,323 @@ href="{{ url_for('static', filename='style.css') }}">
 
 <body>
 
-<!-- ================= LOGIN PAGE ================= -->
+<div class="main-wrapper fade-in">
 
-<div class="login-page">
+    <!-- ================= SIDEBAR ================= -->
 
-    <!-- BACKGROUND GLOW -->
+    <div class="sidebar" id="sidebar">
 
-    <div class="login-glow1"></div>
+        <div>
 
-    <div class="login-glow2"></div>
+            <!-- LOGO -->
 
-    <!-- LOGIN CARD -->
+            <div class="sidebar-top">
 
-    <form
-    method="POST"
-    class="login-card">
+                <img
 
-        <!-- LOGO -->
+                src="{{ url_for('static', filename='applogo.png') }}"
 
-        <img
+                class="sidebar-logo"
 
-        src="{{ url_for('static', filename='applogo.png') }}"
+                >
 
-        class="login-logo"
+                <div>
 
-        >
+                    <h2>
+                        Talkix
+                    </h2>
 
-        <!-- TITLE -->
+                    <p style="color:#94a3b8;font-size:13px;">
+                        Connect Better
+                    </p>
 
-        <h1>
-            Welcome Back
-        </h1>
+                </div>
 
-        <p class="login-subtitle">
+            </div>
 
-            Login to continue chatting
+            <!-- MENU -->
 
-        </p>
+            <div class="sidebar-menu">
 
-        <!-- USERNAME -->
+                <a href="/profile/{{ current_user.username }}">
 
-        <input
+                    <div class="menu-item">
 
-        type="text"
+                        👤 Profile
 
-        name="username"
+                    </div>
 
-        placeholder="Enter username"
+                </a>
 
-        required
+                <a href="/account">
 
-        >
+                    <div class="menu-item">
 
-        <!-- PASSWORD -->
+                        ⚙ Account
 
-        <input
+                    </div>
 
-        type="password"
+                </a>
 
-        name="password"
+                <a href="/stories">
 
-        placeholder="Enter password"
+                    <div class="menu-item">
 
-        required
+                        🔥 Stories
 
-        >
+                    </div>
 
-        <!-- BUTTON -->
+                </a>
 
-        <button
-        type="submit">
+                <a href="/media">
 
-            Login
+                    <div class="menu-item">
 
-        </button>
+                        🖼 Media
 
-        <!-- REGISTER -->
+                    </div>
 
-        <a
-        href="/register"
-        class="register-link">
+                </a>
 
-            Create new account
+            </div>
+
+        </div>
+
+        <!-- LOGOUT -->
+
+        <a href="/logout">
+
+            <div class="menu-item logout">
+
+                🚪 Logout
+
+            </div>
 
         </a>
 
-    </form>
+    </div>
+
+    <!-- ================= MAIN CONTENT ================= -->
+
+    <div class="main-content">
+
+        <!-- TOPBAR -->
+
+        <div class="top-bar">
+
+            <div class="top-left">
+
+                <div
+                class="menu-btn"
+                onclick="toggleSidebar()">
+
+                    ☰
+
+                </div>
+
+                <img
+
+                src="{{ url_for('static', filename='applogo.png') }}"
+
+                class="top-logo"
+
+                >
+
+                <div>
+
+                    <h2>
+                        Welcome,
+                        {{ current_user.name }}
+                    </h2>
+
+                    <p style="color:#94a3b8;font-size:14px;">
+
+                        @{{ current_user.username }}
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- STORIES -->
+
+        <div class="stories-container">
+
+            {% for story in stories %}
+
+            <a
+            href="/view-story/{{ story.id }}"
+            class="story-card">
+
+                <img
+
+                src="{{ url_for('static', filename='stories/' + story.image) }}"
+
+                class="story-image"
+
+                >
+
+                <p>
+                    {{ story.username }}
+                </p>
+
+            </a>
+
+            {% endfor %}
+
+        </div>
+
+        <!-- SEARCH -->
+
+        <div class="search-container">
+
+            <input
+
+            type="text"
+
+            id="searchInput"
+
+            placeholder="Search users..."
+
+            onkeyup="searchUsers()"
+
+            >
+
+        </div>
+
+        <!-- USERS -->
+
+        <div
+        class="users-container"
+        id="usersContainer">
+
+            {% for user in users %}
+
+            <div class="user-card">
+
+                <!-- PROFILE IMAGE -->
+
+                <a href="/profile/{{ user.username }}">
+
+                    <img
+
+                    src="{{ url_for('static', filename='uploads/' + user.profile_pic) }}"
+
+                    class="user-profile"
+
+                    >
+
+                </a>
+
+                <!-- USER INFO -->
+
+                <div
+                class="user-info"
+
+                onclick="
+                window.location.href=
+                '/chat/{{ user.username }}'
+                "
+
+                >
+
+                    <h3>
+                        {{ user.name }}
+                    </h3>
+
+                    <p>
+                        @{{ user.username }}
+                    </p>
+
+                    {% if user.online %}
+
+                    <p style="color:#22c55e;">
+                        ● Online
+                    </p>
+
+                    {% else %}
+
+                    <p style="color:#94a3b8;">
+                        Last seen:
+                        {{ user.last_seen }}
+                    </p>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
 
 </div>
+
+<!-- ================= JAVASCRIPT ================= -->
+
+<script>
+
+/* SEARCH */
+
+function searchUsers(){
+
+    let input =
+
+    document.getElementById(
+    "searchInput"
+    ).value.toLowerCase();
+
+    let cards =
+
+    document.getElementsByClassName(
+    "user-card"
+    );
+
+    for(let i = 0; i < cards.length; i++){
+
+        let text =
+
+        cards[i]
+        .innerText
+        .toLowerCase();
+
+        if(text.includes(input)){
+
+            cards[i].style.display =
+            "flex";
+
+        }
+
+        else{
+
+            cards[i].style.display =
+            "none";
+
+        }
+
+    }
+
+}
+
+/* MOBILE SIDEBAR */
+
+function toggleSidebar(){
+
+    document.getElementById(
+    "sidebar"
+    ).classList.toggle(
+    "show-sidebar"
+    );
+
+}
+
+</script>
 
 </body>
 </html>
